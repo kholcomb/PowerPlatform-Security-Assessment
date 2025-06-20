@@ -1,0 +1,123 @@
+{
+  "Server": {
+    "Port": 8080,
+    "MaxConcurrentRequests": 10,
+    "RequestTimeoutSeconds": 30,
+    "EnableCors": true,
+    "AllowedOrigins": [
+      "*"
+    ],
+    "AllowedMethods": [
+      "GET",
+      "POST",
+      "OPTIONS"
+    ],
+    "AllowedHeaders": [
+      "Content-Type",
+      "Authorization",
+      "X-API-Key"
+    ]
+  },
+  "Authentication": {
+    "Enabled": true,
+    "Type": "ApiKey",
+    "ApiKeys": [
+      {
+        "Key": "YOUR_POWERBI_API_KEY_HERE",
+        "Name": "Power BI Connection",
+        "Description": "API key for Power BI dashboard connections",
+        "Permissions": ["read"],
+        "Created": "2024-01-01T00:00:00Z",
+        "ExpiresAt": null
+      },
+      {
+        "Key": "YOUR_TABLEAU_API_KEY_HERE",
+        "Name": "Tableau Connection", 
+        "Description": "API key for Tableau dashboard connections",
+        "Permissions": ["read"],
+        "Created": "2024-01-01T00:00:00Z",
+        "ExpiresAt": null
+      },
+      {
+        "Key": "YOUR_ADMIN_API_KEY_HERE",
+        "Name": "Admin Access",
+        "Description": "Full administrative access to API",
+        "Permissions": ["read", "admin"],
+        "Created": "2024-01-01T00:00:00Z",
+        "ExpiresAt": null
+      }
+    ],
+    "JwtSecret": "CHANGE_THIS_JWT_SECRET_IN_PRODUCTION",
+    "TokenExpirationMinutes": 60
+  },
+  "Security": {
+    "EnableHttps": false,
+    "CertificateThumbprint": "",
+    "RateLimitingEnabled": true,
+    "MaxRequestsPerMinute": 100,
+    "TrustedProxies": []
+  },
+  "Cache": {
+    "Enabled": true,
+    "DefaultTtlMinutes": 15,
+    "MaxCacheSize": 100
+  },
+  "Logging": {
+    "Level": "Info",
+    "File": "api-log.txt",
+    "MaxFileSizeMB": 10
+  },
+  "Assessment": {
+    "DataRefreshIntervalMinutes": 60,
+    "AutoRefreshEnabled": true,
+    "DefaultEnvironment": ""
+  },
+  "Endpoints": {
+    "/api/summary": {
+      "Description": "Overall security metrics and summary statistics",
+      "RequiredPermissions": ["read"],
+      "CacheTtlMinutes": 15
+    },
+    "/api/environments": {
+      "Description": "Environment details and security configurations",
+      "RequiredPermissions": ["read"],
+      "CacheTtlMinutes": 30
+    },
+    "/api/users": {
+      "Description": "User access data and role assignments",
+      "RequiredPermissions": ["read"],
+      "CacheTtlMinutes": 60
+    },
+    "/api/connections": {
+      "Description": "Connection security data and risk assessments",
+      "RequiredPermissions": ["read"],
+      "CacheTtlMinutes": 30
+    },
+    "/api/flows": {
+      "Description": "Flow analysis data and security findings",
+      "RequiredPermissions": ["read"],
+      "CacheTtlMinutes": 30
+    },
+    "/api/findings": {
+      "Description": "Detailed security findings and recommendations",
+      "RequiredPermissions": ["read"],
+      "CacheTtlMinutes": 15
+    },
+    "/api/health": {
+      "Description": "API health status and statistics",
+      "RequiredPermissions": [],
+      "CacheTtlMinutes": 0
+    }
+  },
+  "PowerBI": {
+    "DefaultRefreshSchedule": "0 */4 * * *",
+    "MaxRowsPerEndpoint": 10000,
+    "OptimizedQueries": true,
+    "EnableDataCompression": true
+  },
+  "Tableau": {
+    "DefaultRefreshSchedule": "0 */6 * * *",
+    "UseWebDataConnector": true,
+    "EnableIncrementalRefresh": false
+  }
+}

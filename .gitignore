@@ -78,6 +78,7 @@ appsettings.*.json
 # PowerPlatform specific sensitive files
 config/API-Config.json
 *config*.json
+!*template*.json
 *.config
 *credentials*
 *auth*token*
