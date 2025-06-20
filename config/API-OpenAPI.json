@@ -1,0 +1,1168 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Power Automate Security Assessment API",
+    "description": "A REST API for accessing Power Automate security assessment data, designed for integration with BI tools like Power BI, Tableau, and other analytics platforms.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Power Platform Security Team",
+      "url": "https://github.com/your-org/powerplatform-security",
+      "email": "security@yourcompany.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Development server"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    },
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/summary": {
+      "get": {
+        "summary": "Get security assessment summary",
+        "description": "Returns overall security metrics and summary statistics for all assessed environments.",
+        "operationId": "getSummary",
+        "tags": ["Summary"],
+        "responses": {
+          "200": {
+            "description": "Security assessment summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummaryResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/environments": {
+      "get": {
+        "summary": "Get environment details",
+        "description": "Returns detailed information about assessed Power Platform environments and their security configurations.",
+        "operationId": "getEnvironments",
+        "tags": ["Environments"],
+        "parameters": [
+          {
+            "name": "riskLevel",
+            "in": "query",
+            "description": "Filter by risk level",
+            "schema": {
+              "type": "string",
+              "enum": ["HIGH", "MEDIUM", "LOW"]
+            }
+          },
+          {
+            "name": "environmentType",
+            "in": "query",
+            "description": "Filter by environment type",
+            "schema": {
+              "type": "string",
+              "enum": ["Production", "Development", "Default"]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageSizeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Environment details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnvironmentsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/users": {
+      "get": {
+        "summary": "Get user access data",
+        "description": "Returns information about user access, role assignments, and security findings.",
+        "operationId": "getUsers",
+        "tags": ["Users"],
+        "parameters": [
+          {
+            "name": "environmentName",
+            "in": "query",
+            "description": "Filter by environment name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "roleType",
+            "in": "query",
+            "description": "Filter by role type",
+            "schema": {
+              "type": "string",
+              "enum": ["EnvironmentAdmin", "EnvironmentMaker", "User"]
+            }
+          },
+          {
+            "name": "principalType",
+            "in": "query",
+            "description": "Filter by principal type",
+            "schema": {
+              "type": "string",
+              "enum": ["User", "ServicePrincipal", "Group"]
+            }
+          },
+          {
+            "name": "requiresReview",
+            "in": "query",
+            "description": "Filter users that require security review",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageSizeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User access data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsersResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/connections": {
+      "get": {
+        "summary": "Get connection security data",
+        "description": "Returns information about Power Platform connections and their security risk assessments.",
+        "operationId": "getConnections",
+        "tags": ["Connections"],
+        "parameters": [
+          {
+            "name": "environmentName",
+            "in": "query",
+            "description": "Filter by environment name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "connectorName",
+            "in": "query",
+            "description": "Filter by connector name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isHighRisk",
+            "in": "query",
+            "description": "Filter high-risk connections",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "requiresAction",
+            "in": "query",
+            "description": "Filter connections requiring action",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageSizeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Connection security data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/flows": {
+      "get": {
+        "summary": "Get flow analysis data",
+        "description": "Returns information about Power Automate flows and their security analysis.",
+        "operationId": "getFlows",
+        "tags": ["Flows"],
+        "parameters": [
+          {
+            "name": "environmentName",
+            "in": "query",
+            "description": "Filter by environment name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "isEnabled",
+            "in": "query",
+            "description": "Filter by enabled status",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "hasHttpTrigger",
+            "in": "query",
+            "description": "Filter flows with HTTP triggers",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "requiresReview",
+            "in": "query",
+            "description": "Filter flows requiring security review",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageSizeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Flow analysis data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlowsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/findings": {
+      "get": {
+        "summary": "Get security findings",
+        "description": "Returns detailed security findings and recommendations from all assessed resources.",
+        "operationId": "getFindings",
+        "tags": ["Findings"],
+        "parameters": [
+          {
+            "name": "riskLevel",
+            "in": "query",
+            "description": "Filter by risk level",
+            "schema": {
+              "type": "string",
+              "enum": ["HIGH", "MEDIUM", "LOW"]
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "description": "Filter by finding category",
+            "schema": {
+              "type": "string",
+              "enum": ["Environment", "User Access", "Connection Security", "Flow Security"]
+            }
+          },
+          {
+            "name": "environmentName",
+            "in": "query",
+            "description": "Filter by environment name",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resourceType",
+            "in": "query",
+            "description": "Filter by resource type",
+            "schema": {
+              "type": "string",
+              "enum": ["Environment", "User", "Connection", "Flow"]
+            }
+          },
+          {
+            "$ref": "#/components/parameters/PageParam"
+          },
+          {
+            "$ref": "#/components/parameters/PageSizeParam"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Security findings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/health": {
+      "get": {
+        "summary": "Get API health status",
+        "description": "Returns the health status and statistics of the API server.",
+        "operationId": "getHealth",
+        "tags": ["Health"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/refresh": {
+      "post": {
+        "summary": "Refresh assessment data",
+        "description": "Triggers a refresh of the cached assessment data.",
+        "operationId": "refreshData",
+        "tags": ["Management"],
+        "responses": {
+          "200": {
+            "description": "Refresh initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "API key for authentication. Use one of the configured API keys from the API-Config.json file."
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Bearer token authentication using JWT tokens."
+      }
+    },
+    "parameters": {
+      "PageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "Page number for pagination (starts at 1)",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "PageSizeParam": {
+        "name": "pageSize",
+        "in": "query",
+        "description": "Number of items per page",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "Authentication failed or missing",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "InternalServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        },
+        "required": ["error"]
+      },
+      "PaginationInfo": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Current page number"
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "Items per page"
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "Total number of items"
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of pages"
+          },
+          "hasNextPage": {
+            "type": "boolean",
+            "description": "Whether there is a next page"
+          },
+          "hasPreviousPage": {
+            "type": "boolean",
+            "description": "Whether there is a previous page"
+          }
+        }
+      },
+      "SummaryResponse": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Assessment timestamp"
+          },
+          "overview": {
+            "type": "object",
+            "properties": {
+              "totalEnvironments": {
+                "type": "integer"
+              },
+              "totalUsers": {
+                "type": "integer"
+              },
+              "totalConnections": {
+                "type": "integer"
+              },
+              "totalFlows": {
+                "type": "integer"
+              }
+            }
+          },
+          "security": {
+            "type": "object",
+            "properties": {
+              "highRiskFindings": {
+                "type": "integer"
+              },
+              "mediumRiskFindings": {
+                "type": "integer"
+              },
+              "lowRiskFindings": {
+                "type": "integer"
+              },
+              "totalFindings": {
+                "type": "integer"
+              },
+              "overallRiskScore": {
+                "type": "integer"
+              }
+            }
+          },
+          "riskDistribution": {
+            "type": "object",
+            "properties": {
+              "high": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "type": "integer"
+                  },
+                  "percentage": {
+                    "type": "number"
+                  }
+                }
+              },
+              "medium": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "type": "integer"
+                  },
+                  "percentage": {
+                    "type": "number"
+                  }
+                }
+              },
+              "low": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "type": "integer"
+                  },
+                  "percentage": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "EnvironmentsResponse": {
+        "type": "object",
+        "properties": {
+          "environments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Environment"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationInfo"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Environment": {
+        "type": "object",
+        "properties": {
+          "environmentId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "environmentType": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "security": {
+            "type": "object",
+            "properties": {
+              "hasSecurityGroup": {
+                "type": "boolean"
+              },
+              "securityGroupId": {
+                "type": "string",
+                "nullable": true
+              },
+              "dlpPolicyCount": {
+                "type": "integer"
+              },
+              "dlpPolicies": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "risk": {
+            "type": "object",
+            "properties": {
+              "findings": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "findingCount": {
+                "type": "integer"
+              },
+              "highRiskCount": {
+                "type": "integer"
+              },
+              "mediumRiskCount": {
+                "type": "integer"
+              },
+              "lowRiskCount": {
+                "type": "integer"
+              },
+              "riskScore": {
+                "type": "integer"
+              },
+              "riskLevel": {
+                "type": "string",
+                "enum": ["HIGH", "MEDIUM", "LOW"]
+              }
+            }
+          },
+          "lastAssessed": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UsersResponse": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationInfo"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "principalDisplayName": {
+            "type": "string"
+          },
+          "principalEmail": {
+            "type": "string"
+          },
+          "principalType": {
+            "type": "string"
+          },
+          "roleType": {
+            "type": "string"
+          },
+          "environmentName": {
+            "type": "string"
+          },
+          "access": {
+            "type": "object",
+            "properties": {
+              "isAdmin": {
+                "type": "boolean"
+              },
+              "isServicePrincipal": {
+                "type": "boolean"
+              },
+              "isExternalUser": {
+                "type": "boolean"
+              }
+            }
+          },
+          "security": {
+            "type": "object",
+            "properties": {
+              "findings": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "findingCount": {
+                "type": "integer"
+              },
+              "requiresReview": {
+                "type": "boolean"
+              },
+              "riskScore": {
+                "type": "integer"
+              }
+            }
+          },
+          "lastAssessed": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ConnectionsResponse": {
+        "type": "object",
+        "properties": {
+          "connections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Connection"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationInfo"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Connection": {
+        "type": "object",
+        "properties": {
+          "connectionName": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "connectorName": {
+            "type": "string"
+          },
+          "environmentName": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          },
+          "connector": {
+            "type": "object",
+            "properties": {
+              "isHighRisk": {
+                "type": "boolean"
+              },
+              "isPremium": {
+                "type": "boolean"
+              },
+              "category": {
+                "type": "string"
+              }
+            }
+          },
+          "security": {
+            "type": "object",
+            "properties": {
+              "findings": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "findingCount": {
+                "type": "integer"
+              },
+              "requiresAction": {
+                "type": "boolean"
+              },
+              "riskScore": {
+                "type": "integer"
+              },
+              "riskLevel": {
+                "type": "string",
+                "enum": ["HIGH", "MEDIUM", "LOW"]
+              }
+            }
+          },
+          "lastAssessed": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FlowsResponse": {
+        "type": "object",
+        "properties": {
+          "flows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Flow"
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationInfo"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Flow": {
+        "type": "object",
+        "properties": {
+          "flowName": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "environmentName": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "boolean"
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "trigger": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string"
+              },
+              "hasHttpTrigger": {
+                "type": "boolean"
+              },
+              "hasManualTrigger": {
+                "type": "boolean"
+              },
+              "hasScheduledTrigger": {
+                "type": "boolean"
+              }
+            }
+          },
+          "security": {
+            "type": "object",
+            "properties": {
+              "findings": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "findingCount": {
+                "type": "integer"
+              },
+              "requiresReview": {
+                "type": "boolean"
+              },
+              "riskScore": {
+                "type": "integer"
+              },
+              "riskLevel": {
+                "type": "string",
+                "enum": ["HIGH", "MEDIUM", "LOW"]
+              }
+            }
+          },
+          "lastAssessed": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FindingsResponse": {
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            }
+          },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "totalFindings": {
+                "type": "integer"
+              },
+              "highRiskFindings": {
+                "type": "integer"
+              },
+              "mediumRiskFindings": {
+                "type": "integer"
+              },
+              "lowRiskFindings": {
+                "type": "integer"
+              }
+            }
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationInfo"
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Finding": {
+        "type": "object",
+        "properties": {
+          "findingId": {
+            "type": "integer"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["Environment", "User Access", "Connection Security", "Flow Security"]
+          },
+          "resourceType": {
+            "type": "string",
+            "enum": ["Environment", "User", "Connection", "Flow"]
+          },
+          "resourceName": {
+            "type": "string"
+          },
+          "environmentName": {
+            "type": "string"
+          },
+          "finding": {
+            "type": "string"
+          },
+          "riskLevel": {
+            "type": "string",
+            "enum": ["HIGH", "MEDIUM", "LOW"]
+          },
+          "riskScore": {
+            "type": "integer"
+          },
+          "detectedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "string"
+          },
+          "uptime": {
+            "type": "object",
+            "properties": {
+              "totalSeconds": {
+                "type": "number"
+              },
+              "formatted": {
+                "type": "string"
+              }
+            }
+          },
+          "statistics": {
+            "type": "object",
+            "properties": {
+              "totalRequests": {
+                "type": "integer"
+              },
+              "successfulRequests": {
+                "type": "integer"
+              },
+              "failedRequests": {
+                "type": "integer"
+              },
+              "successRate": {
+                "type": "number"
+              },
+              "lastRequestTime": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              }
+            }
+          },
+          "cache": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "entryCount": {
+                "type": "integer"
+              },
+              "lastRefresh": {
+                "type": "string",
+                "format": "date-time",
+                "nullable": true
+              }
+            }
+          },
+          "configuration": {
+            "type": "object",
+            "properties": {
+              "authenticationEnabled": {
+                "type": "boolean"
+              },
+              "corsEnabled": {
+                "type": "boolean"
+              },
+              "rateLimitingEnabled": {
+                "type": "boolean"
+              },
+              "httpsEnabled": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Summary",
+      "description": "Overall security assessment summary and metrics"
+    },
+    {
+      "name": "Environments",
+      "description": "Power Platform environment details and security"
+    },
+    {
+      "name": "Users",
+      "description": "User access and role assignment information"
+    },
+    {
+      "name": "Connections",
+      "description": "Connection security analysis and risk assessment"
+    },
+    {
+      "name": "Flows",
+      "description": "Power Automate flow security analysis"
+    },
+    {
+      "name": "Findings",
+      "description": "Detailed security findings and recommendations"
+    },
+    {
+      "name": "Health",
+      "description": "API health status and monitoring"
+    },
+    {
+      "name": "Management",
+      "description": "API management and administrative functions"
+    }
+  ]
+}

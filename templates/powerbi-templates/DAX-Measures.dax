@@ -1,0 +1,278 @@
+-- Power Automate Security Assessment Dashboard - DAX Measures
+
+-- =====================================================
+-- EXECUTIVE SUMMARY MEASURES
+-- =====================================================
+
+-- Overall Security Score (0-100 scale)
+Overall Security Score = 
+VAR TotalFindings = COUNTROWS(SecurityFindings)
+VAR CriticalFindings = CALCULATE(COUNTROWS(SecurityFindings), SecurityFindings[Severity] = "Critical")
+VAR HighFindings = CALCULATE(COUNTROWS(SecurityFindings), SecurityFindings[Severity] = "High")
+VAR MediumFindings = CALCULATE(COUNTROWS(SecurityFindings), SecurityFindings[Severity] = "Medium")
+VAR LowFindings = CALCULATE(COUNTROWS(SecurityFindings), SecurityFindings[Severity] = "Low")
+VAR WeightedFindings = (CriticalFindings * 4) + (HighFindings * 3) + (MediumFindings * 2) + (LowFindings * 1)
+VAR MaxPossibleScore = TotalFindings * 4
+RETURN
+IF(MaxPossibleScore = 0, 100, 100 - (WeightedFindings / MaxPossibleScore * 100))
+
+-- Total Security Findings
+Total Security Findings = COUNTROWS(SecurityFindings)
+
+-- Critical Findings Count
+Critical Findings = CALCULATE(COUNTROWS(SecurityFindings), SecurityFindings[Severity] = "Critical")
+
+-- High Risk Findings Count
+High Risk Findings = CALCULATE(COUNTROWS(SecurityFindings), SecurityFindings[Severity] = "High")
+
+-- Environments at Risk
+Environments at Risk = 
+CALCULATE(
+    DISTINCTCOUNT(SecurityFindings[EnvironmentID]),
+    SecurityFindings[Severity] IN {"Critical", "High"}
+)
+
+-- Flows with Security Issues
+Flows with Issues = DISTINCTCOUNT(SecurityFindings[FlowID])
+
+-- Average Risk Score
+Average Risk Score = AVERAGE(SecurityFindings[RiskScore])
+
+-- Security Trend (Month over Month)
+Security Trend MoM = 
+VAR CurrentMonth = CALCULATE(COUNTROWS(SecurityFindings), DATESMTD(DateTable[Date]))
+VAR PreviousMonth = CALCULATE(COUNTROWS(SecurityFindings), DATEADD(DateTable[Date], -1, MONTH))
+RETURN
+IF(PreviousMonth = 0, BLANK(), (CurrentMonth - PreviousMonth) / PreviousMonth)
+
+-- =====================================================
+-- ENVIRONMENT RISK MEASURES
+-- =====================================================
+
+-- Environment Risk Score
+Environment Risk Score = 
+VAR EnvFindings = CALCULATE(COUNTROWS(SecurityFindings), SecurityFindings[EnvironmentID] = MAX(Environments[EnvironmentID]))
+VAR CriticalCount = CALCULATE(COUNTROWS(SecurityFindings), 
+    SecurityFindings[EnvironmentID] = MAX(Environments[EnvironmentID]) && 
+    SecurityFindings[Severity] = "Critical")
+VAR HighCount = CALCULATE(COUNTROWS(SecurityFindings), 
+    SecurityFindings[EnvironmentID] = MAX(Environments[EnvironmentID]) && 
+    SecurityFindings[Severity] = "High")
+RETURN
+SWITCH(TRUE(),
+    CriticalCount > 0, "Critical",
+    HighCount > 0, "High",
+    EnvFindings > 0, "Medium",
+    "Low"
+)
+
+-- DLP Policy Coverage
+DLP Coverage Percentage = 
+DIVIDE(
+    CALCULATE(COUNTROWS(Environments), Environments[DLPPolicies] > 0),
+    COUNTROWS(Environments)
+) * 100
+
+-- Flows per Environment
+Flows per Environment = 
+CALCULATE(
+    DISTINCTCOUNT(Flows[FlowID]),
+    Flows[EnvironmentID] = MAX(Environments[EnvironmentID])
+)
+
+-- =====================================================
+-- USER ACCESS MEASURES
+-- =====================================================
+
+-- High Risk Users
+High Risk Users = 
+CALCULATE(
+    DISTINCTCOUNT(Users[UserID]),
+    Users[RiskLevel] = "High"
+)
+
+-- Users with Admin Access
+Admin Users Count = 
+CALCULATE(
+    COUNTROWS(Users),
+    Users[HasAdminAccess] = TRUE()
+)
+
+-- Orphaned Flows (flows with inactive owners)
+Orphaned Flows = 
+VAR InactiveUsers = CALCULATE(
+    VALUES(Users[UserID]),
+    Users[LastActivity] < TODAY() - 90
+)
+RETURN
+CALCULATE(
+    COUNTROWS(Flows),
+    Flows[Owner] IN InactiveUsers
+)
+
+-- Average Flows per User
+Avg Flows per User = DIVIDE(COUNTROWS(Flows), DISTINCTCOUNT(Users[UserID]))
+
+-- =====================================================
+-- CONNECTION SECURITY MEASURES
+-- =====================================================
+
+-- Insecure Connections
+Insecure Connections = 
+CALCULATE(
+    COUNTROWS(Connections),
+    Connections[SecurityRating] < 3
+)
+
+-- HTTP Connections Count
+HTTP Connections = 
+CALCULATE(
+    COUNTROWS(Flows),
+    Flows[UsesHTTP] = TRUE()
+)
+
+-- Shared Connections Risk
+Shared Connections Risk = 
+CALCULATE(
+    COUNTROWS(Connections),
+    Connections[IsShared] = TRUE() && Connections[SecurityRating] < 4
+)
+
+-- Deprecated Connections
+Deprecated Connections = 
+CALCULATE(
+    COUNTROWS(Connections),
+    Connections[IsDeprecated] = TRUE()
+)
+
+-- Connection Security Score
+Connection Security Score = 
+VAR TotalConnections = COUNTROWS(Connections)
+VAR SecureConnections = CALCULATE(COUNTROWS(Connections), Connections[SecurityRating] >= 4)
+RETURN
+IF(TotalConnections = 0, 100, DIVIDE(SecureConnections, TotalConnections) * 100)
+
+-- =====================================================
+-- FLOW SECURITY MEASURES
+-- =====================================================
+
+-- Flows with External Connections
+External Connection Flows = 
+CALCULATE(
+    COUNTROWS(Flows),
+    Flows[HasExternalConnections] = TRUE()
+)
+
+-- Flows with Sensitive Data
+Sensitive Data Flows = 
+CALCULATE(
+    COUNTROWS(Flows),
+    Flows[HasSensitiveData] = TRUE()
+)
+
+-- Flow Risk Distribution
+Flow Risk High = CALCULATE(COUNTROWS(Flows), Flows[RiskCategory] = "High")
+Flow Risk Medium = CALCULATE(COUNTROWS(Flows), Flows[RiskCategory] = "Medium")
+Flow Risk Low = CALCULATE(COUNTROWS(Flows), Flows[RiskCategory] = "Low")
+
+-- Active vs Inactive Flows
+Active Flows = CALCULATE(COUNTROWS(Flows), Flows[State] = "Started")
+Inactive Flows = CALCULATE(COUNTROWS(Flows), Flows[State] <> "Started")
+
+-- =====================================================
+-- TREND AND TIME-BASED MEASURES
+-- =====================================================
+
+-- Findings by Month
+Findings This Month = 
+CALCULATE(
+    COUNTROWS(SecurityFindings),
+    MONTH(SecurityFindings[DateFound]) = MONTH(TODAY()) &&
+    YEAR(SecurityFindings[DateFound]) = YEAR(TODAY())
+)
+
+-- Resolved Findings This Month
+Resolved This Month = 
+CALCULATE(
+    COUNTROWS(SecurityFindings),
+    SecurityFindings[Status] = "Resolved" &&
+    MONTH(SecurityFindings[LastUpdated]) = MONTH(TODAY()) &&
+    YEAR(SecurityFindings[LastUpdated]) = YEAR(TODAY())
+)
+
+-- Open Findings Age (Average)
+Avg Open Finding Age = 
+CALCULATE(
+    AVERAGE(TODAY() - SecurityFindings[DateFound]),
+    SecurityFindings[Status] <> "Resolved"
+)
+
+-- =====================================================
+-- COMPLIANCE AND GOVERNANCE MEASURES
+-- =====================================================
+
+-- Compliance Score
+Compliance Score = 
+VAR ComplianceIssues = CALCULATE(
+    COUNTROWS(SecurityFindings),
+    SecurityFindings[Category] IN {"Compliance", "Data Governance", "Access Control"}
+)
+VAR TotalFindings = COUNTROWS(SecurityFindings)
+RETURN
+IF(TotalFindings = 0, 100, 100 - (ComplianceIssues / TotalFindings * 100))
+
+-- Environments Compliant
+Compliant Environments = 
+CALCULATE(
+    COUNTROWS(Environments),
+    Environments[ComplianceStatus] = "Compliant"
+)
+
+-- =====================================================
+-- CALCULATED COLUMNS
+-- =====================================================
+
+-- Risk Level Category (for SecurityFindings table)
+RiskLevelCategory = 
+SWITCH(
+    SecurityFindings[RiskScore],
+    1, "Very Low",
+    2, "Low", 
+    3, "Medium",
+    4, "High",
+    5, "Critical",
+    "Unknown"
+)
+
+-- Days Since Finding (for SecurityFindings table)
+Days Since Finding = TODAY() - SecurityFindings[DateFound]
+
+-- Environment Risk Level (for Environments table)
+EnvironmentRiskLevel = 
+VAR CriticalCount = CALCULATE(COUNTROWS(SecurityFindings), 
+    SecurityFindings[EnvironmentID] = Environments[EnvironmentID] && 
+    SecurityFindings[Severity] = "Critical")
+VAR HighCount = CALCULATE(COUNTROWS(SecurityFindings), 
+    SecurityFindings[EnvironmentID] = Environments[EnvironmentID] && 
+    SecurityFindings[Severity] = "High")
+RETURN
+SWITCH(TRUE(),
+    CriticalCount > 5, "Critical",
+    CriticalCount > 0 || HighCount > 10, "High",
+    HighCount > 0, "Medium",
+    "Low"
+)
+
+-- User Risk Score (for Users table)
+UserRiskScore = 
+VAR FlowRiskSum = CALCULATE(
+    SUMX(Flows, 
+        SWITCH(Flows[RiskCategory], 
+            "High", 3, 
+            "Medium", 2, 
+            "Low", 1, 
+            0)),
+    Flows[Owner] = Users[UserID])
+VAR AdminMultiplier = IF(Users[HasAdminAccess], 2, 1)
+RETURN
+FlowRiskSum * AdminMultiplier

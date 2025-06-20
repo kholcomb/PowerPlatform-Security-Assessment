@@ -1,0 +1,917 @@
+{
+  "dashboardPages": [
+    {
+      "pageName": "Executive Summary",
+      "pageId": "executive-summary",
+      "layout": {
+        "sections": [
+          {
+            "sectionName": "Key Metrics",
+            "position": {"x": 0, "y": 0, "width": 1280, "height": 200},
+            "visuals": [
+              {
+                "type": "card",
+                "title": "Overall Security Score",
+                "measure": "Overall Security Score",
+                "position": {"x": 0, "y": 0, "width": 160, "height": 180},
+                "formatting": {
+                  "fontSize": 48,
+                  "fontColor": "#0078D4",
+                  "backgroundColor": "#F8F9FA",
+                  "suffix": "/100"
+                }
+              },
+              {
+                "type": "card",
+                "title": "Total Findings",
+                "measure": "Total Security Findings",
+                "position": {"x": 180, "y": 0, "width": 160, "height": 180},
+                "formatting": {
+                  "fontSize": 36,
+                  "fontColor": "#D13438"
+                }
+              },
+              {
+                "type": "card",
+                "title": "Critical Issues",
+                "measure": "Critical Findings",
+                "position": {"x": 360, "y": 0, "width": 160, "height": 180},
+                "formatting": {
+                  "fontSize": 36,
+                  "fontColor": "#A80000"
+                }
+              },
+              {
+                "type": "card",
+                "title": "Environments at Risk",
+                "measure": "Environments at Risk",
+                "position": {"x": 540, "y": 0, "width": 160, "height": 180},
+                "formatting": {
+                  "fontSize": 36,
+                  "fontColor": "#FF8C00"
+                }
+              },
+              {
+                "type": "card",
+                "title": "Flows with Issues",
+                "measure": "Flows with Issues",
+                "position": {"x": 720, "y": 0, "width": 160, "height": 180},
+                "formatting": {
+                  "fontSize": 36,
+                  "fontColor": "#B146C2"
+                }
+              },
+              {
+                "type": "gauge",
+                "title": "Security Posture",
+                "measure": "Overall Security Score",
+                "position": {"x": 900, "y": 0, "width": 380, "height": 180},
+                "formatting": {
+                  "min": 0,
+                  "max": 100,
+                  "target": 80,
+                  "colorRanges": [
+                    {"min": 0, "max": 40, "color": "#D13438"},
+                    {"min": 40, "max": 70, "color": "#FF8C00"},
+                    {"min": 70, "max": 100, "color": "#107C10"}
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "sectionName": "Risk Overview",
+            "position": {"x": 0, "y": 220, "width": 640, "height": 300},
+            "visuals": [
+              {
+                "type": "donut",
+                "title": "Findings by Severity",
+                "position": {"x": 0, "y": 220, "width": 320, "height": 300},
+                "data": {
+                  "category": "SecurityFindings[Severity]",
+                  "values": "Total Security Findings"
+                },
+                "formatting": {
+                  "colors": {
+                    "Critical": "#A80000",
+                    "High": "#D13438",
+                    "Medium": "#FF8C00",
+                    "Low": "#FFB900"
+                  }
+                }
+              },
+              {
+                "type": "bar",
+                "title": "Top Security Categories",
+                "position": {"x": 320, "y": 220, "width": 320, "height": 300},
+                "data": {
+                  "category": "SecurityFindings[Category]",
+                  "values": "Total Security Findings"
+                },
+                "formatting": {
+                  "orientation": "horizontal",
+                  "dataLabels": true
+                }
+              }
+            ]
+          },
+          {
+            "sectionName": "Trends",
+            "position": {"x": 660, "y": 220, "width": 620, "height": 300},
+            "visuals": [
+              {
+                "type": "line",
+                "title": "Security Findings Trend",
+                "position": {"x": 660, "y": 220, "width": 620, "height": 300},
+                "data": {
+                  "x": "DateTable[Month]",
+                  "y": "Total Security Findings"
+                },
+                "formatting": {
+                  "lineColor": "#0078D4",
+                  "showDataPoints": true,
+                  "gridlines": true
+                }
+              }
+            ]
+          },
+          {
+            "sectionName": "Environment Status",
+            "position": {"x": 0, "y": 540, "width": 1280, "height": 180},
+            "visuals": [
+              {
+                "type": "matrix",
+                "title": "Environment Risk Matrix",
+                "position": {"x": 0, "y": 540, "width": 1280, "height": 180},
+                "data": {
+                  "rows": ["Environments[EnvironmentName]"],
+                  "columns": ["SecurityFindings[Severity]"],
+                  "values": ["Total Security Findings"]
+                },
+                "formatting": {
+                  "conditionalFormatting": {
+                    "Critical": {"backgroundColor": "#FFEBEE", "fontColor": "#A80000"},
+                    "High": {"backgroundColor": "#FFF3E0", "fontColor": "#D13438"},
+                    "Medium": {"backgroundColor": "#FFF8E1", "fontColor": "#FF8C00"},
+                    "Low": {"backgroundColor": "#F1F8E9", "fontColor": "#107C10"}
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "pageName": "Environment Risk Analysis",
+      "pageId": "environment-risk",
+      "layout": {
+        "sections": [
+          {
+            "sectionName": "Environment Overview",
+            "position": {"x": 0, "y": 0, "width": 1280, "height": 240},
+            "visuals": [
+              {
+                "type": "table",
+                "title": "Environment Summary",
+                "position": {"x": 0, "y": 0, "width": 640, "height": 240},
+                "data": {
+                  "columns": [
+                    "Environments[EnvironmentName]",
+                    "Environments[EnvironmentType]",
+                    "Environment Risk Score",
+                    "Flows per Environment",
+                    "Environments[DLPPolicies]"
+                  ]
+                },
+                "formatting": {
+                  "conditionalFormatting": {
+                    "Environment Risk Score": {
+                      "Critical": {"backgroundColor": "#FFEBEE"},
+                      "High": {"backgroundColor": "#FFF3E0"},
+                      "Medium": {"backgroundColor": "#FFF8E1"},
+                      "Low": {"backgroundColor": "#F1F8E9"}
+                    }
+                  }
+                }
+              },
+              {
+                "type": "clustered_bar",
+                "title": "Environments by Risk Level",
+                "position": {"x": 660, "y": 0, "width": 300, "height": 240},
+                "data": {
+                  "category": "Environment Risk Score",
+                  "values": "COUNTROWS(Environments)"
+                },
+                "formatting": {
+                  "colors": {
+                    "Critical": "#A80000",
+                    "High": "#D13438",
+                    "Medium": "#FF8C00",
+                    "Low": "#107C10"
+                  }
+                }
+              },
+              {
+                "type": "gauge",
+                "title": "DLP Coverage",
+                "measure": "DLP Coverage Percentage",
+                "position": {"x": 980, "y": 0, "width": 300, "height": 240},
+                "formatting": {
+                  "min": 0,
+                  "max": 100,
+                  "target": 90,
+                  "suffix": "%"
+                }
+              }
+            ]
+          },
+          {
+            "sectionName": "Environment Details",
+            "position": {"x": 0, "y": 260, "width": 1280, "height": 460},
+            "visuals": [
+              {
+                "type": "scatter",
+                "title": "Environment Risk vs Flow Count",
+                "position": {"x": 0, "y": 260, "width": 640, "height": 460},
+                "data": {
+                  "x": "Flows per Environment",
+                  "y": "Average Risk Score",
+                  "size": "Total Security Findings",
+                  "category": "Environments[EnvironmentName]"
+                },
+                "formatting": {
+                  "xAxisTitle": "Number of Flows",
+                  "yAxisTitle": "Average Risk Score",
+                  "showQuadrants": true
+                }
+              },
+              {
+                "type": "treemap",
+                "title": "Findings by Environment",
+                "position": {"x": 660, "y": 260, "width": 620, "height": 460},
+                "data": {
+                  "category": "Environments[EnvironmentName]",
+                  "values": "Total Security Findings",
+                  "color": "Average Risk Score"
+                },
+                "formatting": {
+                  "colorScale": {
+                    "min": "#107C10",
+                    "max": "#A80000"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "pageName": "User Access Management",
+      "pageId": "user-access",
+      "layout": {
+        "sections": [
+          {
+            "sectionName": "User Metrics",
+            "position": {"x": 0, "y": 0, "width": 1280, "height": 160},
+            "visuals": [
+              {
+                "type": "card",
+                "title": "Total Users",
+                "measure": "DISTINCTCOUNT(Users[UserID])",
+                "position": {"x": 0, "y": 0, "width": 200, "height": 160}
+              },
+              {
+                "type": "card",
+                "title": "High Risk Users",
+                "measure": "High Risk Users",
+                "position": {"x": 220, "y": 0, "width": 200, "height": 160},
+                "formatting": {"fontColor": "#D13438"}
+              },
+              {
+                "type": "card",
+                "title": "Admin Users",
+                "measure": "Admin Users Count",
+                "position": {"x": 440, "y": 0, "width": 200, "height": 160},
+                "formatting": {"fontColor": "#FF8C00"}
+              },
+              {
+                "type": "card",
+                "title": "Orphaned Flows",
+                "measure": "Orphaned Flows",
+                "position": {"x": 660, "y": 0, "width": 200, "height": 160},
+                "formatting": {"fontColor": "#B146C2"}
+              },
+              {
+                "type": "card",
+                "title": "Avg Flows/User",
+                "measure": "Avg Flows per User",
+                "position": {"x": 880, "y": 0, "width": 200, "height": 160}
+              }
+            ]
+          },
+          {
+            "sectionName": "User Analysis",
+            "position": {"x": 0, "y": 180, "width": 1280, "height": 540},
+            "visuals": [
+              {
+                "type": "table",
+                "title": "User Risk Analysis",
+                "position": {"x": 0, "y": 180, "width": 640, "height": 270},
+                "data": {
+                  "columns": [
+                    "Users[UserName]",
+                    "Users[Department]",
+                    "Users[FlowsOwned]",
+                    "Users[RiskLevel]",
+                    "Users[LastActivity]"
+                  ]
+                },
+                "formatting": {
+                  "conditionalFormatting": {
+                    "Users[RiskLevel]": {
+                      "High": {"backgroundColor": "#FFEBEE"},
+                      "Medium": {"backgroundColor": "#FFF8E1"},
+                      "Low": {"backgroundColor": "#F1F8E9"}
+                    }
+                  }
+                }
+              },
+              {
+                "type": "bar",
+                "title": "Flow Ownership Distribution",
+                "position": {"x": 660, "y": 180, "width": 620, "height": 270},
+                "data": {
+                  "category": "Users[UserName]",
+                  "values": "Users[FlowsOwned]"
+                },
+                "formatting": {
+                  "orientation": "horizontal",
+                  "topN": 10
+                }
+              },
+              {
+                "type": "donut",
+                "title": "Users by Risk Level",
+                "position": {"x": 0, "y": 470, "width": 320, "height": 250},
+                "data": {
+                  "category": "Users[RiskLevel]",
+                  "values": "COUNTROWS(Users)"
+                }
+              },
+              {
+                "type": "bar",
+                "title": "Users by Department",
+                "position": {"x": 340, "y": 470, "width": 320, "height": 250},
+                "data": {
+                  "category": "Users[Department]",
+                  "values": "COUNTROWS(Users)"
+                }
+              },
+              {
+                "type": "line",
+                "title": "User Activity Trend",
+                "position": {"x": 680, "y": 470, "width": 600, "height": 250},
+                "data": {
+                  "x": "DateTable[Month]",
+                  "y": "CALCULATE(DISTINCTCOUNT(Users[UserID]), Users[LastActivity] >= STARTOFMONTH(DateTable[Date]))"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "pageName": "Connection Security",
+      "pageId": "connection-security",
+      "layout": {
+        "sections": [
+          {
+            "sectionName": "Connection Metrics",
+            "position": {"x": 0, "y": 0, "width": 1280, "height": 160},
+            "visuals": [
+              {
+                "type": "card",
+                "title": "Total Connections",
+                "measure": "COUNTROWS(Connections)",
+                "position": {"x": 0, "y": 0, "width": 200, "height": 160}
+              },
+              {
+                "type": "card",
+                "title": "Insecure Connections",
+                "measure": "Insecure Connections",
+                "position": {"x": 220, "y": 0, "width": 200, "height": 160},
+                "formatting": {"fontColor": "#D13438"}
+              },
+              {
+                "type": "card",
+                "title": "HTTP Connections",
+                "measure": "HTTP Connections",
+                "position": {"x": 440, "y": 0, "width": 200, "height": 160},
+                "formatting": {"fontColor": "#FF8C00"}
+              },
+              {
+                "type": "card",
+                "title": "Deprecated",
+                "measure": "Deprecated Connections",
+                "position": {"x": 660, "y": 0, "width": 200, "height": 160},
+                "formatting": {"fontColor": "#B146C2"}
+              },
+              {
+                "type": "gauge",
+                "title": "Security Score",
+                "measure": "Connection Security Score",
+                "position": {"x": 880, "y": 0, "width": 400, "height": 160},
+                "formatting": {
+                  "min": 0,
+                  "max": 100,
+                  "target": 85,
+                  "suffix": "%"
+                }
+              }
+            ]
+          },
+          {
+            "sectionName": "Connection Analysis",
+            "position": {"x": 0, "y": 180, "width": 1280, "height": 540},
+            "visuals": [
+              {
+                "type": "bar",
+                "title": "Connections by Security Rating",
+                "position": {"x": 0, "y": 180, "width": 320, "height": 270},
+                "data": {
+                  "category": "Connections[SecurityRating]",
+                  "values": "COUNTROWS(Connections)"
+                },
+                "formatting": {
+                  "colors": {
+                    "1": "#A80000",
+                    "2": "#D13438",
+                    "3": "#FF8C00",
+                    "4": "#FFB900",
+                    "5": "#107C10"
+                  }
+                }
+              },
+              {
+                "type": "donut",
+                "title": "Authentication Types",
+                "position": {"x": 340, "y": 180, "width": 320, "height": 270},
+                "data": {
+                  "category": "Connections[AuthenticationType]",
+                  "values": "COUNTROWS(Connections)"
+                }
+              },
+              {
+                "type": "bar",
+                "title": "Top Connector Types",
+                "position": {"x": 680, "y": 180, "width": 600, "height": 270},
+                "data": {
+                  "category": "Connections[ConnectorType]",
+                  "values": "COUNTROWS(Connections)"
+                },
+                "formatting": {
+                  "orientation": "horizontal",
+                  "topN": 15
+                }
+              },
+              {
+                "type": "table",
+                "title": "High-Risk Connections",
+                "position": {"x": 0, "y": 470, "width": 1280, "height": 250},
+                "data": {
+                  "columns": [
+                    "Connections[ConnectionName]",
+                    "Connections[ConnectorType]",
+                    "Connections[SecurityRating]",
+                    "Connections[AuthenticationType]",
+                    "Connections[IsShared]",
+                    "Connections[LastUsed]"
+                  ]
+                },
+                "filters": [
+                  {
+                    "column": "Connections[SecurityRating]",
+                    "operator": "<=",
+                    "value": 2
+                  }
+                ],
+                "formatting": {
+                  "conditionalFormatting": {
+                    "Connections[SecurityRating]": {
+                      "1": {"backgroundColor": "#FFEBEE"},
+                      "2": {"backgroundColor": "#FFF3E0"}
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "pageName": "Flow Security Analysis",
+      "pageId": "flow-security",
+      "layout": {
+        "sections": [
+          {
+            "sectionName": "Flow Metrics",
+            "position": {"x": 0, "y": 0, "width": 1280, "height": 160},
+            "visuals": [
+              {
+                "type": "card",
+                "title": "Total Flows",
+                "measure": "COUNTROWS(Flows)",
+                "position": {"x": 0, "y": 0, "width": 180, "height": 160}
+              },
+              {
+                "type": "card",
+                "title": "Active Flows",
+                "measure": "Active Flows",
+                "position": {"x": 200, "y": 0, "width": 180, "height": 160}
+              },
+              {
+                "type": "card",
+                "title": "External Connections",
+                "measure": "External Connection Flows",
+                "position": {"x": 400, "y": 0, "width": 180, "height": 160},
+                "formatting": {"fontColor": "#FF8C00"}
+              },
+              {
+                "type": "card",
+                "title": "Sensitive Data",
+                "measure": "Sensitive Data Flows",
+                "position": {"x": 600, "y": 0, "width": 180, "height": 160},
+                "formatting": {"fontColor": "#D13438"}
+              },
+              {
+                "type": "card",
+                "title": "High Risk",
+                "measure": "Flow Risk High",
+                "position": {"x": 800, "y": 0, "width": 180, "height": 160},
+                "formatting": {"fontColor": "#A80000"}
+              }
+            ]
+          },
+          {
+            "sectionName": "Flow Analysis",
+            "position": {"x": 0, "y": 180, "width": 1280, "height": 540},
+            "visuals": [
+              {
+                "type": "donut",
+                "title": "Flow Risk Distribution",
+                "position": {"x": 0, "y": 180, "width": 320, "height": 270},
+                "data": {
+                  "category": "Flows[RiskCategory]",
+                  "values": "COUNTROWS(Flows)"
+                },
+                "formatting": {
+                  "colors": {
+                    "High": "#A80000",
+                    "Medium": "#FF8C00",
+                    "Low": "#107C10"
+                  }
+                }
+              },
+              {
+                "type": "bar",
+                "title": "Flow States",
+                "position": {"x": 340, "y": 180, "width": 320, "height": 270},
+                "data": {
+                  "category": "Flows[State]",
+                  "values": "COUNTROWS(Flows)"
+                }
+              },
+              {
+                "type": "scatter",
+                "title": "Flow Usage vs Risk",
+                "position": {"x": 680, "y": 180, "width": 600, "height": 270},
+                "data": {
+                  "x": "Flows[RunCount]",
+                  "y": "Flows[ConnectionCount]",
+                  "size": "Flows[SharedUsers]",
+                  "category": "Flows[RiskCategory]"
+                },
+                "formatting": {
+                  "xAxisTitle": "Run Count",
+                  "yAxisTitle": "Connection Count"
+                }
+              },
+              {
+                "type": "table",
+                "title": "High-Risk Flows",
+                "position": {"x": 0, "y": 470, "width": 1280, "height": 250},
+                "data": {
+                  "columns": [
+                    "Flows[FlowName]",
+                    "Flows[Owner]",
+                    "Flows[RiskCategory]",
+                    "Flows[HasSensitiveData]",
+                    "Flows[HasExternalConnections]",
+                    "Flows[RunCount]",
+                    "Flows[ModifiedDate]"
+                  ]
+                },
+                "filters": [
+                  {
+                    "column": "Flows[RiskCategory]",
+                    "operator": "=",
+                    "value": "High"
+                  }
+                ],
+                "formatting": {
+                  "conditionalFormatting": {
+                    "Flows[HasSensitiveData]": {
+                      "True": {"backgroundColor": "#FFEBEE"}
+                    },
+                    "Flows[HasExternalConnections]": {
+                      "True": {"backgroundColor": "#FFF3E0"}
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "pageName": "Detailed Findings",
+      "pageId": "detailed-findings",
+      "layout": {
+        "sections": [
+          {
+            "sectionName": "Findings Summary",
+            "position": {"x": 0, "y": 0, "width": 1280, "height": 160},
+            "visuals": [
+              {
+                "type": "slicer",
+                "title": "Severity Filter",
+                "column": "SecurityFindings[Severity]",
+                "position": {"x": 0, "y": 0, "width": 200, "height": 160},
+                "formatting": {
+                  "type": "list",
+                  "multiSelect": true
+                }
+              },
+              {
+                "type": "slicer",
+                "title": "Category Filter",
+                "column": "SecurityFindings[Category]",
+                "position": {"x": 220, "y": 0, "width": 200, "height": 160},
+                "formatting": {
+                  "type": "dropdown",
+                  "multiSelect": true
+                }
+              },
+              {
+                "type": "slicer",
+                "title": "Status Filter",
+                "column": "SecurityFindings[Status]",
+                "position": {"x": 440, "y": 0, "width": 200, "height": 160},
+                "formatting": {
+                  "type": "list",
+                  "multiSelect": true
+                }
+              },
+              {
+                "type": "slicer",
+                "title": "Environment Filter",
+                "column": "Environments[EnvironmentName]",
+                "position": {"x": 660, "y": 0, "width": 200, "height": 160},
+                "formatting": {
+                  "type": "dropdown",
+                  "multiSelect": true
+                }
+              },
+              {
+                "type": "card",
+                "title": "Filtered Findings",
+                "measure": "Total Security Findings",
+                "position": {"x": 880, "y": 0, "width": 180, "height": 160},
+                "formatting": {"fontSize": 24}
+              },
+              {
+                "type": "card",
+                "title": "Avg Days Open",
+                "measure": "Avg Open Finding Age",
+                "position": {"x": 1080, "y": 0, "width": 200, "height": 160},
+                "formatting": {"fontSize": 24}
+              }
+            ]
+          },
+          {
+            "sectionName": "Findings Details",
+            "position": {"x": 0, "y": 180, "width": 1280, "height": 540},
+            "visuals": [
+              {
+                "type": "table",
+                "title": "Security Findings Detail",
+                "position": {"x": 0, "y": 180, "width": 1280, "height": 540},
+                "data": {
+                  "columns": [
+                    "SecurityFindings[FindingID]",
+                    "SecurityFindings[Category]",
+                    "SecurityFindings[Severity]",
+                    "SecurityFindings[Description]",
+                    "Flows[FlowName]",
+                    "Environments[EnvironmentName]",
+                    "SecurityFindings[Status]",
+                    "SecurityFindings[DateFound]",
+                    "SecurityFindings[AssignedTo]",
+                    "Days Since Finding"
+                  ]
+                },
+                "formatting": {
+                  "conditionalFormatting": {
+                    "SecurityFindings[Severity]": {
+                      "Critical": {"backgroundColor": "#FFEBEE", "fontColor": "#A80000"},
+                      "High": {"backgroundColor": "#FFF3E0", "fontColor": "#D13438"},
+                      "Medium": {"backgroundColor": "#FFF8E1", "fontColor": "#FF8C00"},
+                      "Low": {"backgroundColor": "#F1F8E9", "fontColor": "#107C10"}
+                    },
+                    "Days Since Finding": {
+                      "dataBar": true,
+                      "color": "#FF8C00"
+                    }
+                  },
+                  "sorting": [
+                    {"column": "SecurityFindings[Severity]", "direction": "desc"},
+                    {"column": "SecurityFindings[DateFound]", "direction": "desc"}
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "drillThroughPages": [
+    {
+      "pageName": "Flow Detail Drill",
+      "sourcePages": ["Flow Security Analysis", "Detailed Findings"],
+      "targetColumn": "Flows[FlowID]",
+      "visuals": [
+        {
+          "type": "card",
+          "title": "Flow Name",
+          "field": "Flows[FlowName]"
+        },
+        {
+          "type": "card",
+          "title": "Owner",
+          "field": "Flows[Owner]"
+        },
+        {
+          "type": "table",
+          "title": "Flow Security Findings",
+          "columns": [
+            "SecurityFindings[Category]",
+            "SecurityFindings[Severity]",
+            "SecurityFindings[Description]",
+            "SecurityFindings[Status]"
+          ]
+        },
+        {
+          "type": "table",
+          "title": "Flow Connections",
+          "columns": [
+            "Connections[ConnectionName]",
+            "Connections[ConnectorType]",
+            "Connections[SecurityRating]",
+            "Connections[AuthenticationType]"
+          ]
+        }
+      ]
+    },
+    {
+      "pageName": "Environment Detail Drill",
+      "sourcePages": ["Executive Summary", "Environment Risk Analysis"],
+      "targetColumn": "Environments[EnvironmentID]",
+      "visuals": [
+        {
+          "type": "card",
+          "title": "Environment Name",
+          "field": "Environments[EnvironmentName]"
+        },
+        {
+          "type": "card",
+          "title": "Risk Level",
+          "field": "Environment Risk Score"
+        },
+        {
+          "type": "table",
+          "title": "Environment Security Findings",
+          "columns": [
+            "SecurityFindings[Category]",
+            "SecurityFindings[Severity]",
+            "SecurityFindings[Description]",
+            "Flows[FlowName]"
+          ]
+        },
+        {
+          "type": "bar",
+          "title": "Findings by Category",
+          "data": {
+            "category": "SecurityFindings[Category]",
+            "values": "Total Security Findings"
+          }
+        }
+      ]
+    }
+  ],
+  "bookmarks": [
+    {
+      "name": "Critical Issues Only",
+      "description": "Show only critical severity findings",
+      "filters": [
+        {
+          "table": "SecurityFindings",
+          "column": "Severity",
+          "values": ["Critical"]
+        }
+      ]
+    },
+    {
+      "name": "Open Issues",
+      "description": "Show only open/unresolved findings",
+      "filters": [
+        {
+          "table": "SecurityFindings",
+          "column": "Status",
+          "values": ["Open", "In Progress"]
+        }
+      ]
+    },
+    {
+      "name": "Production Environments",
+      "description": "Focus on production environment security",
+      "filters": [
+        {
+          "table": "Environments",
+          "column": "EnvironmentType",
+          "values": ["Production"]
+        }
+      ]
+    },
+    {
+      "name": "High Risk Users",
+      "description": "Show users with high risk classification",
+      "filters": [
+        {
+          "table": "Users",
+          "column": "RiskLevel",
+          "values": ["High"]
+        }
+      ]
+    }
+  ],
+  "navigation": {
+    "type": "buttons",
+    "position": "top",
+    "style": "tabs",
+    "showPageNames": true,
+    "customButtons": [
+      {
+        "text": "Executive Summary",
+        "action": "navigate",
+        "target": "executive-summary",
+        "icon": "dashboard"
+      },
+      {
+        "text": "Environment Risk",
+        "action": "navigate",
+        "target": "environment-risk",
+        "icon": "environment"
+      },
+      {
+        "text": "User Access",
+        "action": "navigate",
+        "target": "user-access",
+        "icon": "user"
+      },
+      {
+        "text": "Connections",
+        "action": "navigate",
+        "target": "connection-security",
+        "icon": "connection"
+      },
+      {
+        "text": "Flow Security",
+        "action": "navigate",
+        "target": "flow-security",
+        "icon": "flow"
+      },
+      {
+        "text": "All Findings",
+        "action": "navigate",
+        "target": "detailed-findings",
+        "icon": "list"
+      }
+    ]
+  }
+}

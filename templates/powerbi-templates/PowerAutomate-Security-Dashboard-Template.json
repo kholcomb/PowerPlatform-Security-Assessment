@@ -1,0 +1,209 @@
+{
+  "templateMetadata": {
+    "name": "Power Automate Security Assessment Dashboard",
+    "version": "1.0.0",
+    "description": "Comprehensive security assessment dashboard for Power Automate environments",
+    "author": "Power Platform Security Team",
+    "createdDate": "2025-06-20",
+    "lastModified": "2025-06-20"
+  },
+  "dataModel": {
+    "tables": [
+      {
+        "name": "SecurityFindings",
+        "columns": [
+          {"name": "FindingID", "dataType": "Text", "key": true},
+          {"name": "EnvironmentID", "dataType": "Text"},
+          {"name": "FlowID", "dataType": "Text"},
+          {"name": "FlowName", "dataType": "Text"},
+          {"name": "Category", "dataType": "Text"},
+          {"name": "Severity", "dataType": "Text"},
+          {"name": "RiskScore", "dataType": "Whole Number"},
+          {"name": "Description", "dataType": "Text"},
+          {"name": "Recommendation", "dataType": "Text"},
+          {"name": "Status", "dataType": "Text"},
+          {"name": "DateFound", "dataType": "Date/Time"},
+          {"name": "LastUpdated", "dataType": "Date/Time"},
+          {"name": "AssignedTo", "dataType": "Text"},
+          {"name": "BusinessImpact", "dataType": "Text"},
+          {"name": "Remediation", "dataType": "Text"}
+        ]
+      },
+      {
+        "name": "Environments",
+        "columns": [
+          {"name": "EnvironmentID", "dataType": "Text", "key": true},
+          {"name": "EnvironmentName", "dataType": "Text"},
+          {"name": "EnvironmentType", "dataType": "Text"},
+          {"name": "Region", "dataType": "Text"},
+          {"name": "SecurityLevel", "dataType": "Text"},
+          {"name": "DLPPolicies", "dataType": "Whole Number"},
+          {"name": "ActiveFlows", "dataType": "Whole Number"},
+          {"name": "LastAssessed", "dataType": "Date/Time"},
+          {"name": "RiskLevel", "dataType": "Text"},
+          {"name": "ComplianceStatus", "dataType": "Text"}
+        ]
+      },
+      {
+        "name": "Flows",
+        "columns": [
+          {"name": "FlowID", "dataType": "Text", "key": true},
+          {"name": "FlowName", "dataType": "Text"},
+          {"name": "EnvironmentID", "dataType": "Text"},
+          {"name": "Owner", "dataType": "Text"},
+          {"name": "State", "dataType": "Text"},
+          {"name": "CreatedDate", "dataType": "Date/Time"},
+          {"name": "ModifiedDate", "dataType": "Date/Time"},
+          {"name": "RunCount", "dataType": "Whole Number"},
+          {"name": "ConnectionCount", "dataType": "Whole Number"},
+          {"name": "SharedUsers", "dataType": "Whole Number"},
+          {"name": "RiskCategory", "dataType": "Text"},
+          {"name": "HasSensitiveData", "dataType": "True/False"},
+          {"name": "UsesHTTP", "dataType": "True/False"},
+          {"name": "HasExternalConnections", "dataType": "True/False"}
+        ]
+      },
+      {
+        "name": "Connections",
+        "columns": [
+          {"name": "ConnectionID", "dataType": "Text", "key": true},
+          {"name": "ConnectionName", "dataType": "Text"},
+          {"name": "ConnectorType", "dataType": "Text"},
+          {"name": "EnvironmentID", "dataType": "Text"},
+          {"name": "FlowID", "dataType": "Text"},
+          {"name": "AuthenticationType", "dataType": "Text"},
+          {"name": "IsShared", "dataType": "True/False"},
+          {"name": "SecurityRating", "dataType": "Whole Number"},
+          {"name": "LastUsed", "dataType": "Date/Time"},
+          {"name": "IsDeprecated", "dataType": "True/False"},
+          {"name": "RequiresMFA", "dataType": "True/False"}
+        ]
+      },
+      {
+        "name": "Users",
+        "columns": [
+          {"name": "UserID", "dataType": "Text", "key": true},
+          {"name": "UserName", "dataType": "Text"},
+          {"name": "Email", "dataType": "Text"},
+          {"name": "Department", "dataType": "Text"},
+          {"name": "Role", "dataType": "Text"},
+          {"name": "FlowsOwned", "dataType": "Whole Number"},
+          {"name": "FlowsShared", "dataType": "Whole Number"},
+          {"name": "LastActivity", "dataType": "Date/Time"},
+          {"name": "RiskLevel", "dataType": "Text"},
+          {"name": "HasAdminAccess", "dataType": "True/False"}
+        ]
+      },
+      {
+        "name": "DateTable",
+        "columns": [
+          {"name": "Date", "dataType": "Date", "key": true},
+          {"name": "Year", "dataType": "Whole Number"},
+          {"name": "Quarter", "dataType": "Text"},
+          {"name": "Month", "dataType": "Text"},
+          {"name": "MonthNumber", "dataType": "Whole Number"},
+          {"name": "Week", "dataType": "Whole Number"},
+          {"name": "DayOfWeek", "dataType": "Text"},
+          {"name": "IsWeekend", "dataType": "True/False"}
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "fromTable": "SecurityFindings",
+        "fromColumn": "EnvironmentID",
+        "toTable": "Environments",
+        "toColumn": "EnvironmentID",
+        "cardinality": "Many-to-One"
+      },
+      {
+        "fromTable": "SecurityFindings",
+        "fromColumn": "FlowID",
+        "toTable": "Flows",
+        "toColumn": "FlowID",
+        "cardinality": "Many-to-One"
+      },
+      {
+        "fromTable": "Flows",
+        "fromColumn": "EnvironmentID",
+        "toTable": "Environments",
+        "toColumn": "EnvironmentID",
+        "cardinality": "Many-to-One"
+      },
+      {
+        "fromTable": "Connections",
+        "fromColumn": "EnvironmentID",
+        "toTable": "Environments",
+        "toColumn": "EnvironmentID",
+        "cardinality": "Many-to-One"
+      },
+      {
+        "fromTable": "Connections",
+        "fromColumn": "FlowID",
+        "toTable": "Flows",
+        "toColumn": "FlowID",
+        "cardinality": "Many-to-One"
+      },
+      {
+        "fromTable": "Flows",
+        "fromColumn": "Owner",
+        "toTable": "Users",
+        "toColumn": "UserID",
+        "cardinality": "Many-to-One"
+      },
+      {
+        "fromTable": "SecurityFindings",
+        "fromColumn": "DateFound",
+        "toTable": "DateTable",
+        "toColumn": "Date",
+        "cardinality": "Many-to-One"
+      }
+    ]
+  },
+  "pages": [
+    {
+      "name": "Executive Summary",
+      "displayName": "Executive Summary",
+      "order": 1,
+      "description": "High-level overview of security posture and key metrics"
+    },
+    {
+      "name": "Environment Risk Analysis",
+      "displayName": "Environment Risk Analysis",
+      "order": 2,
+      "description": "Environment-specific security analysis and risk assessment"
+    },
+    {
+      "name": "User Access Management",
+      "displayName": "User Access Management",
+      "order": 3,
+      "description": "User permissions and access control analysis"
+    },
+    {
+      "name": "Connection Security",
+      "displayName": "Connection Security",
+      "order": 4,
+      "description": "Analysis of connector security and authentication methods"
+    },
+    {
+      "name": "Flow Security Analysis",
+      "displayName": "Flow Security Analysis",
+      "order": 5,
+      "description": "Detailed security analysis of individual flows"
+    },
+    {
+      "name": "Detailed Findings",
+      "displayName": "Detailed Findings",
+      "order": 6,
+      "description": "Comprehensive list of all security findings with filtering and drill-down"
+    }
+  ],
+  "theme": {
+    "primaryColor": "#0078D4",
+    "secondaryColor": "#106EBE",
+    "accentColor": "#FF4B4B",
+    "backgroundColor": "#F8F9FA",
+    "textColor": "#323130",
+    "gridColor": "#E1E1E1"
+  }
+}

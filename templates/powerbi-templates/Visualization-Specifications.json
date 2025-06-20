@@ -1,0 +1,665 @@
+{
+  "visualizationSpecifications": {
+    "theme": {
+      "name": "Power Platform Security Theme",
+      "colors": {
+        "primary": "#0078D4",
+        "secondary": "#106EBE",
+        "accent": "#FF4B4B",
+        "success": "#107C10",
+        "warning": "#FF8C00",
+        "error": "#A80000",
+        "background": "#F8F9FA",
+        "surface": "#FFFFFF",
+        "text": "#323130",
+        "textSecondary": "#605E5C",
+        "border": "#E1E1E1"
+      },
+      "fonts": {
+        "primary": "Segoe UI",
+        "secondary": "Segoe UI Semibold",
+        "code": "Consolas"
+      },
+      "severityColors": {
+        "Critical": "#A80000",
+        "High": "#D13438",
+        "Medium": "#FF8C00",
+        "Low": "#FFB900",
+        "Info": "#0078D4"
+      },
+      "riskColors": {
+        "High": "#A80000",
+        "Medium": "#FF8C00",
+        "Low": "#107C10"
+      }
+    },
+    "visualTypes": {
+      "gauges": {
+        "securityScoreGauge": {
+          "type": "gauge",
+          "title": "Overall Security Score",
+          "description": "Displays the overall security posture score from 0-100",
+          "dataFields": {
+            "value": "Overall Security Score",
+            "target": 80,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "formatting": {
+            "displayUnits": "None",
+            "decimalPlaces": 0,
+            "fontSize": 48,
+            "fontFamily": "Segoe UI Semibold",
+            "colorRanges": [
+              {"min": 0, "max": 40, "color": "#A80000"},
+              {"min": 40, "max": 70, "color": "#FF8C00"},
+              {"min": 70, "max": 100, "color": "#107C10"}
+            ],
+            "targetLine": {
+              "show": true,
+              "color": "#0078D4",
+              "thickness": 3
+            },
+            "calloutValue": {
+              "show": true,
+              "color": "#323130",
+              "fontSize": 24
+            }
+          },
+          "size": {"width": 400, "height": 200}
+        },
+        "dlpCoverageGauge": {
+          "type": "gauge",
+          "title": "DLP Policy Coverage",
+          "description": "Percentage of environments with DLP policies",
+          "dataFields": {
+            "value": "DLP Coverage Percentage",
+            "target": 90,
+            "minimum": 0,
+            "maximum": 100
+          },
+          "formatting": {
+            "displayUnits": "None",
+            "decimalPlaces": 1,
+            "suffix": "%",
+            "colorRanges": [
+              {"min": 0, "max": 50, "color": "#A80000"},
+              {"min": 50, "max": 80, "color": "#FF8C00"},
+              {"min": 80, "max": 100, "color": "#107C10"}
+            ]
+          },
+          "size": {"width": 300, "height": 200}
+        }
+      },
+      "cards": {
+        "kpiCard": {
+          "type": "card",
+          "description": "Standard KPI card for displaying single metrics",
+          "formatting": {
+            "categoryLabel": {
+              "show": true,
+              "color": "#605E5C",
+              "fontSize": 12,
+              "fontFamily": "Segoe UI"
+            },
+            "dataLabel": {
+              "color": "#323130",
+              "fontSize": 28,
+              "fontFamily": "Segoe UI Semibold"
+            },
+            "general": {
+              "responsive": true,
+              "keepLayerOrder": true
+            }
+          },
+          "conditionalFormatting": {
+            "rules": [
+              {
+                "condition": "SecurityFindings[Severity] = 'Critical'",
+                "format": {"color": "#A80000", "backgroundColor": "#FFEBEE"}
+              },
+              {
+                "condition": "SecurityFindings[Severity] = 'High'",
+                "format": {"color": "#D13438", "backgroundColor": "#FFF3E0"}
+              }
+            ]
+          },
+          "size": {"width": 180, "height": 160}
+        }
+      },
+      "charts": {
+        "donutChart": {
+          "type": "donut",
+          "description": "Donut chart for categorical data distribution",
+          "dataFields": {
+            "legend": "Category field",
+            "values": "Measure field"
+          },
+          "formatting": {
+            "legend": {
+              "show": true,
+              "position": "Right",
+              "fontSize": 10,
+              "fontFamily": "Segoe UI"
+            },
+            "dataLabels": {
+              "show": true,
+              "labelStyle": "Both",
+              "fontSize": 9,
+              "fontFamily": "Segoe UI"
+            },
+            "innerRadius": 40,
+            "colors": "Custom",
+            "customColors": [
+              {"category": "Critical", "color": "#A80000"},
+              {"category": "High", "color": "#D13438"},
+              {"category": "Medium", "color": "#FF8C00"},
+              {"category": "Low", "color": "#FFB900"}
+            ]
+          },
+          "size": {"width": 320, "height": 270}
+        },
+        "barChart": {
+          "type": "clusteredBar",
+          "description": "Horizontal bar chart for ranking data",
+          "dataFields": {
+            "axis": "Category field",
+            "values": "Measure field"
+          },
+          "formatting": {
+            "categoryAxis": {
+              "show": true,
+              "fontSize": 10,
+              "fontFamily": "Segoe UI"
+            },
+            "valueAxis": {
+              "show": true,
+              "fontSize": 10,
+              "fontFamily": "Segoe UI"
+            },
+            "dataLabels": {
+              "show": true,
+              "position": "InsideEnd",
+              "fontSize": 9,
+              "fontFamily": "Segoe UI"
+            },
+            "colors": {
+              "single": "#0078D4"
+            }
+          },
+          "size": {"width": 600, "height": 270}
+        },
+        "lineChart": {
+          "type": "line",
+          "description": "Line chart for trend analysis",
+          "dataFields": {
+            "axis": "Date field",
+            "values": "Measure field"
+          },
+          "formatting": {
+            "categoryAxis": {
+              "show": true,
+              "type": "Categorical",
+              "fontSize": 10,
+              "fontFamily": "Segoe UI"
+            },
+            "valueAxis": {
+              "show": true,
+              "fontSize": 10,
+              "fontFamily": "Segoe UI"
+            },
+            "dataColors": {
+              "single": "#0078D4"
+            },
+            "shapes": {
+              "showMarker": true,
+              "markerShape": "Circle"
+            },
+            "plotArea": {
+              "gridlines": true,
+              "gridlineColor": "#E1E1E1"
+            }
+          },
+          "size": {"width": 620, "height": 300}
+        },
+        "scatterChart": {
+          "type": "scatter",
+          "description": "Scatter plot for correlation analysis",
+          "dataFields": {
+            "xAxis": "Numeric field",
+            "yAxis": "Numeric field",
+            "size": "Measure field",
+            "details": "Category field"
+          },
+          "formatting": {
+            "xAxis": {
+              "show": true,
+              "fontSize": 10,
+              "fontFamily": "Segoe UI"
+            },
+            "yAxis": {
+              "show": true,
+              "fontSize": 10,
+              "fontFamily": "Segoe UI"
+            },
+            "dataColors": {
+              "diverging": true,
+              "minimum": "#107C10",
+              "maximum": "#A80000"
+            },
+            "shapes": {
+              "showMarker": true,
+              "markerShape": "Circle"
+            },
+            "plotArea": {
+              "gridlines": true,
+              "gridlineColor": "#E1E1E1"
+            }
+          },
+          "size": {"width": 640, "height": 460}
+        },
+        "treemap": {
+          "type": "treemap",
+          "description": "Treemap for hierarchical data visualization",
+          "dataFields": {
+            "group": "Category field",
+            "values": "Measure field",
+            "color": "Measure field"
+          },
+          "formatting": {
+            "dataLabels": {
+              "show": true,
+              "fontSize": 10,
+              "fontFamily": "Segoe UI Semibold"
+            },
+            "categoryLabels": {
+              "show": true,
+              "fontSize": 8,
+              "fontFamily": "Segoe UI"
+            },
+            "colors": {
+              "diverging": true,
+              "minimum": "#107C10",
+              "center": "#FFB900",
+              "maximum": "#A80000"
+            }
+          },
+          "size": {"width": 620, "height": 460}
+        }
+      },
+      "tables": {
+        "standardTable": {
+          "type": "table",
+          "description": "Standard table for detailed data display",
+          "formatting": {
+            "general": {
+              "textSize": 9,
+              "fontFamily": "Segoe UI"
+            },
+            "header": {
+              "fontColor": "#323130",
+              "backgroundColor": "#F8F9FA",
+              "fontSize": 10,
+              "fontFamily": "Segoe UI Semibold"
+            },
+            "values": {
+              "fontColor": "#323130",
+              "backgroundColor": "#FFFFFF",
+              "fontSize": 9,
+              "fontFamily": "Segoe UI"
+            },
+            "grid": {
+              "gridVertical": true,
+              "gridHorizontal": true,
+              "gridVerticalColor": "#E1E1E1",
+              "gridHorizontalColor": "#E1E1E1"
+            },
+            "conditionalFormatting": {
+              "rules": [
+                {
+                  "field": "SecurityFindings[Severity]",
+                  "conditions": [
+                    {
+                      "condition": "Critical",
+                      "format": {"backgroundColor": "#FFEBEE", "fontColor": "#A80000"}
+                    },
+                    {
+                      "condition": "High",
+                      "format": {"backgroundColor": "#FFF3E0", "fontColor": "#D13438"}
+                    },
+                    {
+                      "condition": "Medium",
+                      "format": {"backgroundColor": "#FFF8E1", "fontColor": "#FF8C00"}
+                    },
+                    {
+                      "condition": "Low",
+                      "format": {"backgroundColor": "#F1F8E9", "fontColor": "#107C10"}
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "size": {"width": 1280, "height": 540}
+        },
+        "matrixTable": {
+          "type": "matrix",
+          "description": "Matrix table for cross-tabular analysis",
+          "formatting": {
+            "general": {
+              "textSize": 9,
+              "fontFamily": "Segoe UI"
+            },
+            "columnHeaders": {
+              "fontColor": "#323130",
+              "backgroundColor": "#F8F9FA",
+              "fontSize": 10,
+              "fontFamily": "Segoe UI Semibold"
+            },
+            "rowHeaders": {
+              "fontColor": "#323130",
+              "backgroundColor": "#F8F9FA",
+              "fontSize": 10,
+              "fontFamily": "Segoe UI Semibold"
+            },
+            "values": {
+              "fontColor": "#323130",
+              "backgroundColor": "#FFFFFF",
+              "fontSize": 9,
+              "fontFamily": "Segoe UI"
+            },
+            "conditionalFormatting": {
+              "colorScale": {
+                "minimum": {"color": "#F1F8E9", "value": 0},
+                "center": {"color": "#FFF8E1", "value": 5},
+                "maximum": {"color": "#FFEBEE", "value": 10}
+              }
+            }
+          },
+          "size": {"width": 1280, "height": 180}
+        }
+      },
+      "slicers": {
+        "listSlicer": {
+          "type": "slicer",
+          "style": "list",
+          "description": "List-style slicer for filtering",
+          "formatting": {
+            "general": {
+              "responsive": true,
+              "orientation": "Vertical"
+            },
+            "selection": {
+              "multiSelect": true,
+              "showSelectAll": true
+            },
+            "items": {
+              "fontColor": "#323130",
+              "backgroundColor": "#FFFFFF",
+              "fontSize": 10,
+              "fontFamily": "Segoe UI"
+            },
+            "header": {
+              "show": true,
+              "fontColor": "#323130",
+              "backgroundColor": "#F8F9FA",
+              "fontSize": 12,
+              "fontFamily": "Segoe UI Semibold"
+            }
+          },
+          "size": {"width": 200, "height": 160}
+        },
+        "dropdownSlicer": {
+          "type": "slicer",
+          "style": "dropdown",
+          "description": "Dropdown-style slicer for filtering",
+          "formatting": {
+            "general": {
+              "responsive": true
+            },
+            "selection": {
+              "multiSelect": true
+            },
+            "items": {
+              "fontColor": "#323130",
+              "fontSize": 10,
+              "fontFamily": "Segoe UI"
+            },
+            "header": {
+              "show": true,
+              "fontColor": "#323130",
+              "fontSize": 12,
+              "fontFamily": "Segoe UI Semibold"
+            }
+          },
+          "size": {"width": 200, "height": 50}
+        }
+      }
+    },
+    "pageLayouts": {
+      "executiveSummary": {
+        "pageName": "Executive Summary",
+        "description": "High-level overview with key metrics and trends",
+        "sections": [
+          {
+            "name": "Key Metrics",
+            "position": {"x": 0, "y": 0, "width": 1280, "height": 200},
+            "backgroundColor": "#F8F9FA",
+            "visuals": [
+              {
+                "name": "Security Score Gauge",
+                "type": "gauges.securityScoreGauge",
+                "position": {"x": 900, "y": 10, "width": 370, "height": 180},
+                "dataBinding": {
+                  "value": "[Overall Security Score]"
+                }
+              },
+              {
+                "name": "Total Findings Card",
+                "type": "cards.kpiCard",
+                "position": {"x": 180, "y": 10, "width": 160, "height": 180},
+                "dataBinding": {
+                  "value": "[Total Security Findings]"
+                },
+                "title": "Total Findings",
+                "formatting": {
+                  "dataLabel": {"color": "#D13438", "fontSize": 36}
+                }
+              },
+              {
+                "name": "Critical Issues Card",
+                "type": "cards.kpiCard",
+                "position": {"x": 360, "y": 10, "width": 160, "height": 180},
+                "dataBinding": {
+                  "value": "[Critical Findings]"
+                },
+                "title": "Critical Issues",
+                "formatting": {
+                  "dataLabel": {"color": "#A80000", "fontSize": 36}
+                }
+              }
+            ]
+          },
+          {
+            "name": "Risk Distribution",
+            "position": {"x": 0, "y": 220, "width": 640, "height": 300},
+            "visuals": [
+              {
+                "name": "Severity Donut",
+                "type": "charts.donutChart",
+                "position": {"x": 10, "y": 230, "width": 300, "height": 280},
+                "dataBinding": {
+                  "legend": "SecurityFindings[Severity]",
+                  "values": "[Total Security Findings]"
+                },
+                "title": "Findings by Severity"
+              },
+              {
+                "name": "Category Bar Chart",
+                "type": "charts.barChart",
+                "position": {"x": 330, "y": 230, "width": 300, "height": 280},
+                "dataBinding": {
+                  "axis": "SecurityFindings[Category]",
+                  "values": "[Total Security Findings]"
+                },
+                "title": "Top Security Categories"
+              }
+            ]
+          }
+        ]
+      },
+      "environmentRisk": {
+        "pageName": "Environment Risk Analysis",
+        "description": "Environment-specific security analysis",
+        "sections": [
+          {
+            "name": "Environment Overview",
+            "position": {"x": 0, "y": 0, "width": 1280, "height": 240},
+            "visuals": [
+              {
+                "name": "Environment Table",
+                "type": "tables.standardTable",
+                "position": {"x": 10, "y": 10, "width": 620, "height": 220},
+                "dataBinding": {
+                  "columns": [
+                    "Environments[EnvironmentName]",
+                    "Environments[EnvironmentType]",
+                    "[Environment Risk Score]",
+                    "[Flows per Environment]",
+                    "Environments[DLPPolicies]"
+                  ]
+                },
+                "title": "Environment Summary"
+              },
+              {
+                "name": "Risk Distribution",
+                "type": "charts.barChart",
+                "position": {"x": 650, "y": 10, "width": 280, "height": 220},
+                "dataBinding": {
+                  "axis": "[Environment Risk Score]",
+                  "values": "COUNTROWS(Environments)"
+                },
+                "title": "Environments by Risk Level"
+              },
+              {
+                "name": "DLP Coverage",
+                "type": "gauges.dlpCoverageGauge",
+                "position": {"x": 950, "y": 10, "width": 320, "height": 220}
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "interactionBehaviors": {
+      "crossFiltering": {
+        "enabled": true,
+        "bidirectional": false,
+        "exceptions": [
+          {
+            "fromVisual": "slicers",
+            "toVisual": "all",
+            "behavior": "filter"
+          }
+        ]
+      },
+      "drillThrough": {
+        "enabled": true,
+        "pages": [
+          {
+            "sourcePage": "Executive Summary",
+            "targetPage": "Environment Detail Drill",
+            "triggerField": "Environments[EnvironmentID]"
+          },
+          {
+            "sourcePage": "Flow Security Analysis",
+            "targetPage": "Flow Detail Drill",
+            "triggerField": "Flows[FlowID]"
+          }
+        ]
+      },
+      "tooltips": {
+        "enabled": true,
+        "customTooltips": [
+          {
+            "visual": "charts.scatterChart",
+            "fields": [
+              "Flows[FlowName]",
+              "Flows[Owner]",
+              "[Total Security Findings]"
+            ]
+          }
+        ]
+      }
+    },
+    "accessibility": {
+      "colorBlindFriendly": true,
+      "highContrast": true,
+      "keyboardNavigation": true,
+      "screenReaderSupport": true,
+      "altText": {
+        "required": true,
+        "autoGenerate": false
+      }
+    },
+    "performance": {
+      "dataReduction": {
+        "enabled": true,
+        "topN": {
+          "enabled": true,
+          "defaultValue": 100
+        },
+        "sampling": {
+          "enabled": false
+        }
+      },
+      "visualOptimization": {
+        "animationsEnabled": false,
+        "gradientColors": false,
+        "shadows": false
+      }
+    },
+    "responsiveDesign": {
+      "breakpoints": [
+        {"width": 1920, "name": "Desktop Large"},
+        {"width": 1366, "name": "Desktop Standard"},
+        {"width": 1024, "name": "Tablet Landscape"},
+        {"width": 768, "name": "Tablet Portrait"},
+        {"width": 480, "name": "Mobile"}
+      ],
+      "layouts": {
+        "mobile": {
+          "stackVisuals": true,
+          "hideComplexVisuals": true,
+          "simplifyTables": true
+        }
+      }
+    },
+    "exportFormats": {
+      "pdf": {
+        "enabled": true,
+        "pageSize": "A4",
+        "orientation": "Landscape"
+      },
+      "powerpoint": {
+        "enabled": true,
+        "slideSize": "16:9"
+      },
+      "excel": {
+        "enabled": true,
+        "includeVisuals": true
+      }
+    },
+    "printSettings": {
+      "pageSize": "A4",
+      "orientation": "Landscape",
+      "margins": {
+        "top": 20,
+        "bottom": 20,
+        "left": 20,
+        "right": 20
+      },
+      "scaling": "FitToWidth"
+    }
+  }
+}

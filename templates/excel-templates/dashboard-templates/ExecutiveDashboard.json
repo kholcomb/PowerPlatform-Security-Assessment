@@ -1,0 +1,397 @@
+{
+  "dashboardName": "Executive Security Overview Dashboard",
+  "version": "1.0",
+  "targetAudience": "C-Level Executives",
+  "description": "High-level security metrics and KPIs for executive reporting",
+  "refreshFrequency": "Daily",
+  "worksheets": {
+    "Executive Summary": {
+      "layout": {
+        "header": {
+          "position": "A1:P3",
+          "title": "Power Automate Security Executive Dashboard",
+          "subtitle": "Enterprise Risk Assessment Overview",
+          "logo": "A1:C3",
+          "lastUpdated": "N1",
+          "confidentiality": "P1"
+        },
+        "kpiSection": {
+          "position": "A5:P12",
+          "title": "Key Security Indicators",
+          "cards": [
+            {
+              "name": "Overall Security Score",
+              "position": "A5:D8",
+              "formula": "=ROUND(AVERAGE('Raw Data'!ComplianceScore),0)",
+              "target": 85,
+              "format": "gauge",
+              "colors": {
+                "excellent": "#00AA00",
+                "good": "#FFAA00", 
+                "poor": "#FF0000"
+              },
+              "thresholds": [70, 85]
+            },
+            {
+              "name": "Critical Risk Flows",
+              "position": "E5:H8",
+              "formula": "=COUNTIFS('Raw Data'!RiskLevel,\"High\",'Raw Data'!BusinessImpact,\"Critical\")",
+              "format": "number",
+              "icon": "warning",
+              "alertThreshold": 5,
+              "colors": {
+                "normal": "#2F5597",
+                "alert": "#FF0000"
+              }
+            },
+            {
+              "name": "Compliance Rate",
+              "position": "I5:L8",
+              "formula": "=ROUND((COUNTIF('Raw Data'!ComplianceScore,\">70\")/COUNTA('Raw Data'!ComplianceScore))*100,1)",
+              "format": "percentage",
+              "target": 95,
+              "trend": "=ComplianceRate-PreviousMonth",
+              "colors": {
+                "up": "#00AA00",
+                "down": "#FF0000",
+                "neutral": "#666666"
+              }
+            },
+            {
+              "name": "Flows Requiring Action",
+              "position": "M5:P8",
+              "formula": "=COUNTIF('Raw Data'!RemediationPriority,\"Immediate\")+COUNTIF('Raw Data'!RemediationPriority,\"High\")",
+              "format": "number",
+              "actionButton": "View Details",
+              "colors": {
+                "normal": "#70AD47",
+                "attention": "#FFC000"
+              }
+            },
+            {
+              "name": "Data Protection Level",
+              "position": "A9:D12",
+              "formula": "=ROUND((COUNTIF('Raw Data'!IsEncrypted,TRUE)/COUNTA('Raw Data'!IsEncrypted))*100,1)",
+              "format": "percentage",
+              "icon": "shield",
+              "colors": {
+                "secure": "#2E8B57",
+                "moderate": "#DAA520",
+                "insecure": "#DC143C"
+              }
+            },
+            {
+              "name": "External Exposure Risk",
+              "position": "E9:H12",
+              "formula": "=SUMPRODUCT('Raw Data'!ExternalConnections,'Raw Data'!UserCount)/1000",
+              "format": "number_k",
+              "suffix": "K",
+              "colors": {
+                "low": "#90EE90",
+                "medium": "#FFD700",
+                "high": "#FF6347"
+              }
+            },
+            {
+              "name": "Governance Score",
+              "position": "I9:L12",
+              "formula": "=ROUND((COUNTIFS('Raw Data'!Owner,\"<>\")+COUNTIFS('Raw Data'!Documentation,\"<>\"))/COUNTA('Raw Data'!FlowID)*50,1)",
+              "format": "number",
+              "target": 90,
+              "colors": {
+                "excellent": "#4169E1",
+                "good": "#32CD32", 
+                "needs_improvement": "#FFA500"
+              }
+            },
+            {
+              "name": "Monthly Risk Trend",
+              "position": "M9:P12",
+              "formula": "=IF(AvgRiskThisMonth>AvgRiskLastMonth,\"↑\",IF(AvgRiskThisMonth<AvgRiskLastMonth,\"↓\",\"→\"))",
+              "format": "trend_arrow",
+              "colors": {
+                "up": "#FF0000",
+                "down": "#00AA00",
+                "neutral": "#666666"
+              }
+            }
+          ]
+        },
+        "riskOverview": {
+          "position": "A14:H25",
+          "title": "Risk Distribution Overview",
+          "chartType": "treemap",
+          "dataSource": "RiskTreemapData",
+          "dimensions": ["BusinessUnit", "RiskLevel"],
+          "measure": "FlowCount",
+          "colors": {
+            "High": "#8B0000",
+            "Medium": "#FF8C00",
+            "Low": "#228B22"
+          },
+          "interactivity": {
+            "clickAction": "drillDown",
+            "hoverInfo": ["FlowCount", "ComplianceScore", "Owner"]
+          }
+        },
+        "complianceStatus": {
+          "position": "I14:P25",
+          "title": "Compliance Framework Status",
+          "chartType": "radar", 
+          "dataSource": "ComplianceFrameworkData",
+          "frameworks": ["SOX", "GDPR", "HIPAA", "PCI DSS", "ISO 27001", "SOC 2"],
+          "colors": ["#2F5597"],
+          "fillOpacity": 0.3,
+          "showMaxLine": true
+        },
+        "topRisks": {
+          "position": "A27:H35",
+          "title": "Top 5 Risk Areas",
+          "type": "rankingTable",
+          "dataSource": "TopRisksData",
+          "columns": [
+            {
+              "name": "Risk Category",
+              "width": 30
+            },
+            {
+              "name": "Flow Count",
+              "width": 15,
+              "format": "number"
+            },
+            {
+              "name": "Avg Risk Score",
+              "width": 20,
+              "format": "number_1_decimal",
+              "conditionalFormat": "heatmap"
+            },
+            {
+              "name": "Business Impact",
+              "width": 25,
+              "format": "text"
+            },
+            {
+              "name": "Action Required",
+              "width": 10,
+              "format": "icon",
+              "iconSet": "trafficLights"
+            }
+          ]
+        },
+        "recommendations": {
+          "position": "I27:P35",
+          "title": "Executive Recommendations",
+          "type": "textBox",
+          "autoGenerate": true,
+          "content": [
+            {
+              "priority": "High",
+              "text": "Immediate review of {HighRiskCount} critical flows required",
+              "action": "Assign security team leads"
+            },
+            {
+              "priority": "Medium", 
+              "text": "Enhance encryption policies for external connectors",
+              "action": "Update security standards"
+            },
+            {
+              "priority": "Low",
+              "text": "Implement quarterly compliance audits",
+              "action": "Schedule recurring reviews"
+            }
+          ]
+        }
+      },
+      "slicers": [
+        {
+          "name": "TimePeriodSlicer",
+          "position": "A37:D40",
+          "source": "DateDimension",
+          "title": "Time Period",
+          "defaultValue": "Last 30 Days",
+          "style": "executive"
+        },
+        {
+          "name": "BusinessUnitSlicer", 
+          "position": "E37:H40",
+          "source": "BusinessUnits",
+          "title": "Business Unit",
+          "defaultValue": "All",
+          "style": "executive"
+        }
+      ]
+    },
+    "Risk Heatmap": {
+      "layout": {
+        "riskMatrix": {
+          "position": "A2:L25",
+          "title": "Enterprise Risk Heat Map",
+          "type": "matrix_heatmap",
+          "xAxis": "Business Impact",
+          "yAxis": "Risk Probability", 
+          "dataSource": "RiskMatrixData",
+          "cellSize": "large",
+          "colorScale": {
+            "low": "#90EE90",
+            "medium": "#FFD700", 
+            "high": "#FF6347",
+            "critical": "#8B0000"
+          },
+          "annotations": {
+            "showFlowCount": true,
+            "showRiskScore": true
+          }
+        },
+        "riskLegend": {
+          "position": "N2:P10",
+          "type": "legend",
+          "items": [
+            {"color": "#90EE90", "label": "Low Risk (0-25)"},
+            {"color": "#FFD700", "label": "Medium Risk (26-50)"},
+            {"color": "#FF6347", "label": "High Risk (51-75)"},
+            {"color": "#8B0000", "label": "Critical Risk (76-100)"}
+          ]
+        }
+      }
+    },
+    "Compliance Scorecard": {
+      "layout": {
+        "scorecardTable": {
+          "position": "A2:N20",
+          "title": "Compliance Scorecard by Framework",
+          "type": "scorecard",
+          "dataSource": "ComplianceScorecardData",
+          "frameworks": [
+            {
+              "name": "SOX",
+              "weight": 25,
+              "controls": ["Segregation of Duties", "Audit Trail", "Change Management"]
+            },
+            {
+              "name": "GDPR", 
+              "weight": 25,
+              "controls": ["Data Protection", "Consent Management", "Breach Notification"]
+            },
+            {
+              "name": "HIPAA",
+              "weight": 20,
+              "controls": ["Data Encryption", "Access Controls", "Audit Logging"]
+            },
+            {
+              "name": "PCI DSS",
+              "weight": 15,
+              "controls": ["Secure Networks", "Cardholder Data Protection", "Access Management"]
+            },
+            {
+              "name": "ISO 27001",
+              "weight": 10,
+              "controls": ["Information Security", "Risk Management", "Incident Response"]
+            },
+            {
+              "name": "SOC 2",
+              "weight": 5,
+              "controls": ["Security", "Availability", "Processing Integrity"]
+            }
+          ],
+          "grading": {
+            "A": {"min": 90, "color": "#00AA00"},
+            "B": {"min": 80, "color": "#90EE90"},
+            "C": {"min": 70, "color": "#FFD700"},
+            "D": {"min": 60, "color": "#FFA500"},
+            "F": {"min": 0, "color": "#FF0000"}
+          }
+        }
+      }
+    }
+  },
+  "calculations": {
+    "namedFormulas": [
+      {
+        "name": "OverallSecurityScore",
+        "formula": "=ROUND(AVERAGE('Raw Data'!ComplianceScore),0)"
+      },
+      {
+        "name": "HighRiskCount", 
+        "formula": "=COUNTIF('Raw Data'!RiskLevel,\"High\")"
+      },
+      {
+        "name": "ComplianceRate",
+        "formula": "=ROUND((COUNTIF('Raw Data'!ComplianceScore,\">70\")/COUNTA('Raw Data'!ComplianceScore))*100,1)"
+      },
+      {
+        "name": "CriticalFlowCount",
+        "formula": "=COUNTIFS('Raw Data'!RiskLevel,\"High\",'Raw Data'!BusinessImpact,\"Critical\")"
+      },
+      {
+        "name": "EncryptionRate", 
+        "formula": "=ROUND((COUNTIF('Raw Data'!IsEncrypted,TRUE)/COUNTA('Raw Data'!IsEncrypted))*100,1)"
+      }
+    ]
+  },
+  "formatting": {
+    "theme": "executive",
+    "colorPalette": {
+      "primary": "#2F5597",
+      "secondary": "#70AD47", 
+      "accent": "#FFC000",
+      "danger": "#C5504B",
+      "warning": "#FF9900",
+      "success": "#00AA00",
+      "info": "#0070C0"
+    },
+    "fonts": {
+      "title": "Calibri Light, 18pt, Bold",
+      "subtitle": "Calibri, 14pt, Bold", 
+      "body": "Calibri, 11pt",
+      "kpi": "Calibri, 24pt, Bold"
+    },
+    "borders": {
+      "kpiCards": "thin, #CCCCCC",
+      "tables": "medium, #2F5597",
+      "charts": "none"
+    }
+  },
+  "interactivity": {
+    "drillDown": {
+      "enabled": true,
+      "levels": ["Summary", "Detail", "Flow Level"]
+    },
+    "filtering": {
+      "cascading": true,
+      "resetButton": true
+    },
+    "navigation": {
+      "tabOrder": ["Executive Summary", "Risk Heatmap", "Compliance Scorecard"],
+      "breadcrumbs": true
+    }
+  },
+  "automation": {
+    "refreshSchedule": {
+      "frequency": "daily",
+      "time": "06:00 AM",
+      "weekends": false
+    },
+    "alerts": [
+      {
+        "name": "Critical Risk Alert",
+        "condition": "CriticalFlowCount > 5",
+        "recipients": ["ciso@company.com", "cto@company.com"],
+        "frequency": "immediate"
+      },
+      {
+        "name": "Compliance Degradation",
+        "condition": "ComplianceRate < 85",
+        "recipients": ["compliance@company.com"],
+        "frequency": "daily"
+      }
+    ],
+    "exports": {
+      "pdfReport": {
+        "schedule": "weekly",
+        "day": "Monday",
+        "time": "08:00 AM",
+        "recipients": ["executives@company.com"]
+      }
+    }
+  }
+}

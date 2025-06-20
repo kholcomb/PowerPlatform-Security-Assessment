@@ -1,0 +1,672 @@
+{
+  "dataModelSchema": {
+    "version": "1.0",
+    "description": "Power Automate Security Assessment Data Model Schema",
+    "tables": {
+      "SecurityFindings": {
+        "description": "Core security findings and issues identified during assessment",
+        "primaryKey": "FindingID",
+        "columns": {
+          "FindingID": {
+            "dataType": "Text",
+            "description": "Unique identifier for the security finding",
+            "nullable": false,
+            "maxLength": 50
+          },
+          "EnvironmentID": {
+            "dataType": "Text",
+            "description": "ID of the environment where the finding was discovered",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "FlowID": {
+            "dataType": "Text",
+            "description": "ID of the specific flow associated with the finding",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "FlowName": {
+            "dataType": "Text",
+            "description": "Display name of the flow",
+            "nullable": true,
+            "maxLength": 200
+          },
+          "Category": {
+            "dataType": "Text",
+            "description": "Category of security finding",
+            "nullable": false,
+            "allowedValues": [
+              "Authentication",
+              "Authorization",
+              "Data Protection",
+              "Network Security",
+              "Compliance",
+              "Configuration",
+              "Access Control",
+              "Data Governance",
+              "Connector Security",
+              "Flow Design"
+            ]
+          },
+          "Severity": {
+            "dataType": "Text",
+            "description": "Severity level of the finding",
+            "nullable": false,
+            "allowedValues": ["Critical", "High", "Medium", "Low", "Info"]
+          },
+          "RiskScore": {
+            "dataType": "Integer",
+            "description": "Numeric risk score (1-5 scale)",
+            "nullable": false,
+            "minValue": 1,
+            "maxValue": 5
+          },
+          "Description": {
+            "dataType": "Text",
+            "description": "Detailed description of the security finding",
+            "nullable": false,
+            "maxLength": 1000
+          },
+          "Recommendation": {
+            "dataType": "Text",
+            "description": "Recommended actions to address the finding",
+            "nullable": false,
+            "maxLength": 1000
+          },
+          "Status": {
+            "dataType": "Text",
+            "description": "Current status of the finding",
+            "nullable": false,
+            "allowedValues": ["Open", "In Progress", "Resolved", "Accepted Risk", "False Positive"]
+          },
+          "DateFound": {
+            "dataType": "DateTime",
+            "description": "Date when the finding was first identified",
+            "nullable": false
+          },
+          "LastUpdated": {
+            "dataType": "DateTime",
+            "description": "Date when the finding was last updated",
+            "nullable": false
+          },
+          "AssignedTo": {
+            "dataType": "Text",
+            "description": "Person or team assigned to address the finding",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "BusinessImpact": {
+            "dataType": "Text",
+            "description": "Potential business impact of the finding",
+            "nullable": true,
+            "allowedValues": ["High", "Medium", "Low", "None"]
+          },
+          "Remediation": {
+            "dataType": "Text",
+            "description": "Remediation actions taken or planned",
+            "nullable": true,
+            "maxLength": 1000
+          }
+        },
+        "indexes": [
+          {"columns": ["EnvironmentID"], "type": "non-clustered"},
+          {"columns": ["FlowID"], "type": "non-clustered"},
+          {"columns": ["Severity"], "type": "non-clustered"},
+          {"columns": ["DateFound"], "type": "non-clustered"},
+          {"columns": ["Status"], "type": "non-clustered"}
+        ]
+      },
+      "Environments": {
+        "description": "Power Platform environments and their security configuration",
+        "primaryKey": "EnvironmentID",
+        "columns": {
+          "EnvironmentID": {
+            "dataType": "Text",
+            "description": "Unique identifier for the environment",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "EnvironmentName": {
+            "dataType": "Text",
+            "description": "Display name of the environment",
+            "nullable": false,
+            "maxLength": 200
+          },
+          "EnvironmentType": {
+            "dataType": "Text",
+            "description": "Type of environment",
+            "nullable": false,
+            "allowedValues": ["Production", "UAT", "Development", "Trial", "Sandbox", "Default"]
+          },
+          "Region": {
+            "dataType": "Text",
+            "description": "Geographic region where environment is hosted",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "SecurityLevel": {
+            "dataType": "Text",
+            "description": "Configured security level",
+            "nullable": true,
+            "allowedValues": ["High", "Medium", "Standard", "Basic"]
+          },
+          "DLPPolicies": {
+            "dataType": "Integer",
+            "description": "Number of DLP policies applied to environment",
+            "nullable": false,
+            "minValue": 0
+          },
+          "ActiveFlows": {
+            "dataType": "Integer",
+            "description": "Number of active flows in environment",
+            "nullable": false,
+            "minValue": 0
+          },
+          "LastAssessed": {
+            "dataType": "DateTime",
+            "description": "Date of last security assessment",
+            "nullable": true
+          },
+          "RiskLevel": {
+            "dataType": "Text",
+            "description": "Overall risk level assessment",
+            "nullable": true,
+            "allowedValues": ["Critical", "High", "Medium", "Low"]
+          },
+          "ComplianceStatus": {
+            "dataType": "Text",
+            "description": "Compliance status of the environment",
+            "nullable": true,
+            "allowedValues": ["Compliant", "Non-Compliant", "Partial", "Unknown"]
+          }
+        },
+        "indexes": [
+          {"columns": ["EnvironmentType"], "type": "non-clustered"},
+          {"columns": ["RiskLevel"], "type": "non-clustered"}
+        ]
+      },
+      "Flows": {
+        "description": "Power Automate flows and their security characteristics",
+        "primaryKey": "FlowID",
+        "columns": {
+          "FlowID": {
+            "dataType": "Text",
+            "description": "Unique identifier for the flow",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "FlowName": {
+            "dataType": "Text",
+            "description": "Display name of the flow",
+            "nullable": false,
+            "maxLength": 200
+          },
+          "EnvironmentID": {
+            "dataType": "Text",
+            "description": "ID of environment containing the flow",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "Owner": {
+            "dataType": "Text",
+            "description": "User ID of the flow owner",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "State": {
+            "dataType": "Text",
+            "description": "Current state of the flow",
+            "nullable": false,
+            "allowedValues": ["Started", "Stopped", "Suspended"]
+          },
+          "CreatedDate": {
+            "dataType": "DateTime",
+            "description": "Date when flow was created",
+            "nullable": false
+          },
+          "ModifiedDate": {
+            "dataType": "DateTime",
+            "description": "Date when flow was last modified",
+            "nullable": false
+          },
+          "RunCount": {
+            "dataType": "Integer",
+            "description": "Total number of flow runs",
+            "nullable": false,
+            "minValue": 0
+          },
+          "ConnectionCount": {
+            "dataType": "Integer",
+            "description": "Number of connections used by flow",
+            "nullable": false,
+            "minValue": 0
+          },
+          "SharedUsers": {
+            "dataType": "Integer",
+            "description": "Number of users with access to flow",
+            "nullable": false,
+            "minValue": 0
+          },
+          "RiskCategory": {
+            "dataType": "Text",
+            "description": "Risk category classification",
+            "nullable": true,
+            "allowedValues": ["High", "Medium", "Low"]
+          },
+          "HasSensitiveData": {
+            "dataType": "Boolean",
+            "description": "Whether flow processes sensitive data",
+            "nullable": false
+          },
+          "UsesHTTP": {
+            "dataType": "Boolean",
+            "description": "Whether flow uses HTTP (non-HTTPS) connections",
+            "nullable": false
+          },
+          "HasExternalConnections": {
+            "dataType": "Boolean",
+            "description": "Whether flow connects to external systems",
+            "nullable": false
+          }
+        },
+        "indexes": [
+          {"columns": ["EnvironmentID"], "type": "non-clustered"},
+          {"columns": ["Owner"], "type": "non-clustered"},
+          {"columns": ["State"], "type": "non-clustered"},
+          {"columns": ["RiskCategory"], "type": "non-clustered"}
+        ]
+      },
+      "Connections": {
+        "description": "Connection and connector security information",
+        "primaryKey": "ConnectionID",
+        "columns": {
+          "ConnectionID": {
+            "dataType": "Text",
+            "description": "Unique identifier for the connection",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "ConnectionName": {
+            "dataType": "Text",
+            "description": "Display name of the connection",
+            "nullable": false,
+            "maxLength": 200
+          },
+          "ConnectorType": {
+            "dataType": "Text",
+            "description": "Type of connector",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "EnvironmentID": {
+            "dataType": "Text",
+            "description": "ID of environment containing the connection",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "FlowID": {
+            "dataType": "Text",
+            "description": "ID of flow using the connection",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "AuthenticationType": {
+            "dataType": "Text",
+            "description": "Authentication method used",
+            "nullable": false,
+            "allowedValues": [
+              "OAuth2",
+              "Basic",
+              "API Key",
+              "Windows",
+              "Certificate",
+              "Service Principal",
+              "Anonymous"
+            ]
+          },
+          "IsShared": {
+            "dataType": "Boolean",
+            "description": "Whether connection is shared among users",
+            "nullable": false
+          },
+          "SecurityRating": {
+            "dataType": "Integer",
+            "description": "Security rating of connection (1-5 scale)",
+            "nullable": false,
+            "minValue": 1,
+            "maxValue": 5
+          },
+          "LastUsed": {
+            "dataType": "DateTime",
+            "description": "Date when connection was last used",
+            "nullable": true
+          },
+          "IsDeprecated": {
+            "dataType": "Boolean",
+            "description": "Whether connector is deprecated",
+            "nullable": false
+          },
+          "RequiresMFA": {
+            "dataType": "Boolean",
+            "description": "Whether connection requires multi-factor authentication",
+            "nullable": false
+          }
+        },
+        "indexes": [
+          {"columns": ["EnvironmentID"], "type": "non-clustered"},
+          {"columns": ["FlowID"], "type": "non-clustered"},
+          {"columns": ["ConnectorType"], "type": "non-clustered"},
+          {"columns": ["SecurityRating"], "type": "non-clustered"}
+        ]
+      },
+      "Users": {
+        "description": "User information and access patterns",
+        "primaryKey": "UserID",
+        "columns": {
+          "UserID": {
+            "dataType": "Text",
+            "description": "Unique identifier for the user",
+            "nullable": false,
+            "maxLength": 100
+          },
+          "UserName": {
+            "dataType": "Text",
+            "description": "Display name of the user",
+            "nullable": false,
+            "maxLength": 200
+          },
+          "Email": {
+            "dataType": "Text",
+            "description": "Email address of the user",
+            "nullable": false,
+            "maxLength": 200
+          },
+          "Department": {
+            "dataType": "Text",
+            "description": "Department or business unit",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "Role": {
+            "dataType": "Text",
+            "description": "User role or job title",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "FlowsOwned": {
+            "dataType": "Integer",
+            "description": "Number of flows owned by user",
+            "nullable": false,
+            "minValue": 0
+          },
+          "FlowsShared": {
+            "dataType": "Integer",
+            "description": "Number of flows shared with user",
+            "nullable": false,
+            "minValue": 0
+          },
+          "LastActivity": {
+            "dataType": "DateTime",
+            "description": "Date of last Power Automate activity",
+            "nullable": true
+          },
+          "RiskLevel": {
+            "dataType": "Text",
+            "description": "User risk level classification",
+            "nullable": true,
+            "allowedValues": ["High", "Medium", "Low"]
+          },
+          "HasAdminAccess": {
+            "dataType": "Boolean",
+            "description": "Whether user has administrative privileges",
+            "nullable": false
+          }
+        },
+        "indexes": [
+          {"columns": ["Department"], "type": "non-clustered"},
+          {"columns": ["RiskLevel"], "type": "non-clustered"},
+          {"columns": ["HasAdminAccess"], "type": "non-clustered"}
+        ]
+      },
+      "DateTable": {
+        "description": "Date dimension table for time-based analysis",
+        "primaryKey": "Date",
+        "columns": {
+          "Date": {
+            "dataType": "Date",
+            "description": "Calendar date",
+            "nullable": false
+          },
+          "Year": {
+            "dataType": "Integer",
+            "description": "Year component",
+            "nullable": false
+          },
+          "Quarter": {
+            "dataType": "Text",
+            "description": "Quarter designation (Q1, Q2, Q3, Q4)",
+            "nullable": false,
+            "maxLength": 2
+          },
+          "Month": {
+            "dataType": "Text",
+            "description": "Month name",
+            "nullable": false,
+            "maxLength": 20
+          },
+          "MonthNumber": {
+            "dataType": "Integer",
+            "description": "Month number (1-12)",
+            "nullable": false,
+            "minValue": 1,
+            "maxValue": 12
+          },
+          "Week": {
+            "dataType": "Integer",
+            "description": "Week number of year",
+            "nullable": false,
+            "minValue": 1,
+            "maxValue": 53
+          },
+          "DayOfWeek": {
+            "dataType": "Text",
+            "description": "Day of week name",
+            "nullable": false,
+            "maxLength": 10
+          },
+          "IsWeekend": {
+            "dataType": "Boolean",
+            "description": "Whether date falls on weekend",
+            "nullable": false
+          }
+        }
+      }
+    },
+    "relationships": [
+      {
+        "name": "SecurityFindings_to_Environments",
+        "fromTable": "SecurityFindings",
+        "fromColumn": "EnvironmentID",
+        "toTable": "Environments",
+        "toColumn": "EnvironmentID",
+        "cardinality": "Many-to-One",
+        "crossFilterDirection": "Single",
+        "isActive": true
+      },
+      {
+        "name": "SecurityFindings_to_Flows",
+        "fromTable": "SecurityFindings",
+        "fromColumn": "FlowID",
+        "toTable": "Flows",
+        "toColumn": "FlowID",
+        "cardinality": "Many-to-One",
+        "crossFilterDirection": "Single",
+        "isActive": true
+      },
+      {
+        "name": "Flows_to_Environments",
+        "fromTable": "Flows",
+        "fromColumn": "EnvironmentID",
+        "toTable": "Environments",
+        "toColumn": "EnvironmentID",
+        "cardinality": "Many-to-One",
+        "crossFilterDirection": "Single",
+        "isActive": true
+      },
+      {
+        "name": "Connections_to_Environments",
+        "fromTable": "Connections",
+        "fromColumn": "EnvironmentID",
+        "toTable": "Environments",
+        "toColumn": "EnvironmentID",
+        "cardinality": "Many-to-One",
+        "crossFilterDirection": "Single",
+        "isActive": true
+      },
+      {
+        "name": "Connections_to_Flows",
+        "fromTable": "Connections",
+        "fromColumn": "FlowID",
+        "toTable": "Flows",
+        "toColumn": "FlowID",
+        "cardinality": "Many-to-One",
+        "crossFilterDirection": "Single",
+        "isActive": true
+      },
+      {
+        "name": "Flows_to_Users",
+        "fromTable": "Flows",
+        "fromColumn": "Owner",
+        "toTable": "Users",
+        "toColumn": "UserID",
+        "cardinality": "Many-to-One",
+        "crossFilterDirection": "Single",
+        "isActive": true
+      },
+      {
+        "name": "SecurityFindings_to_DateTable",
+        "fromTable": "SecurityFindings",
+        "fromColumn": "DateFound",
+        "toTable": "DateTable",
+        "toColumn": "Date",
+        "cardinality": "Many-to-One",
+        "crossFilterDirection": "Single",
+        "isActive": true
+      }
+    ],
+    "hierarchies": [
+      {
+        "table": "DateTable",
+        "name": "Date Hierarchy",
+        "levels": [
+          {"name": "Year", "column": "Year"},
+          {"name": "Quarter", "column": "Quarter"},
+          {"name": "Month", "column": "Month"},
+          {"name": "Date", "column": "Date"}
+        ]
+      },
+      {
+        "table": "Environments",
+        "name": "Environment Hierarchy",
+        "levels": [
+          {"name": "Environment Type", "column": "EnvironmentType"},
+          {"name": "Environment Name", "column": "EnvironmentName"}
+        ]
+      }
+    ],
+    "dataQualityRules": [
+      {
+        "table": "SecurityFindings",
+        "rule": "Required Fields Check",
+        "description": "Ensure all required fields are populated",
+        "validation": "FindingID IS NOT NULL AND EnvironmentID IS NOT NULL AND Category IS NOT NULL AND Severity IS NOT NULL"
+      },
+      {
+        "table": "SecurityFindings",
+        "rule": "Risk Score Range",
+        "description": "Risk score must be between 1 and 5",
+        "validation": "RiskScore >= 1 AND RiskScore <= 5"
+      },
+      {
+        "table": "Flows",
+        "rule": "Valid Flow State",
+        "description": "Flow state must be valid value",
+        "validation": "State IN ('Started', 'Stopped', 'Suspended')"
+      },
+      {
+        "table": "Connections",
+        "rule": "Security Rating Range",
+        "description": "Security rating must be between 1 and 5",
+        "validation": "SecurityRating >= 1 AND SecurityRating <= 5"
+      }
+    ],
+    "sampleData": {
+      "SecurityFindings": [
+        {
+          "FindingID": "SF001",
+          "EnvironmentID": "ENV001",
+          "FlowID": "FLOW001",
+          "FlowName": "Customer Data Sync",
+          "Category": "Data Protection",
+          "Severity": "High",
+          "RiskScore": 4,
+          "Description": "Flow processes customer data without encryption",
+          "Recommendation": "Implement data encryption for sensitive fields",
+          "Status": "Open",
+          "DateFound": "2024-01-15",
+          "LastUpdated": "2024-01-15",
+          "AssignedTo": "Security Team",
+          "BusinessImpact": "High",
+          "Remediation": "Pending security review"
+        }
+      ],
+      "Environments": [
+        {
+          "EnvironmentID": "ENV001",
+          "EnvironmentName": "Production",
+          "EnvironmentType": "Production",
+          "Region": "US East",
+          "SecurityLevel": "High",
+          "DLPPolicies": 3,
+          "ActiveFlows": 25,
+          "LastAssessed": "2024-01-10",
+          "RiskLevel": "Medium",
+          "ComplianceStatus": "Compliant"
+        }
+      ]
+    }
+  },
+  "dataSourceConfiguration": {
+    "supportedSources": [
+      {
+        "name": "Power Platform Admin Center API",
+        "type": "REST API",
+        "authentication": "OAuth2",
+        "endpoints": [
+          "/environments",
+          "/flows",
+          "/connections",
+          "/users"
+        ]
+      },
+      {
+        "name": "Custom Security Assessment Database",
+        "type": "SQL Database",
+        "authentication": "SQL Server Authentication",
+        "tables": ["SecurityFindings", "AssessmentHistory"]
+      },
+      {
+        "name": "Azure AD",
+        "type": "Graph API",
+        "authentication": "Service Principal",
+        "endpoints": ["/users", "/groups"]
+      }
+    ],
+    "refreshSchedule": {
+      "frequency": "Daily",
+      "time": "06:00 UTC",
+      "incrementalRefresh": true,
+      "retentionPeriod": "2 years"
+    }
+  }
+}

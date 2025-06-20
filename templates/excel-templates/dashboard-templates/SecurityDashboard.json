@@ -1,0 +1,366 @@
+{
+  "dashboardName": "Power Automate Security Assessment Dashboard",
+  "version": "1.0",
+  "lastUpdated": "2024-12-20",
+  "description": "Comprehensive security dashboard for Power Automate flow analysis",
+  "worksheets": {
+    "Dashboard": {
+      "layout": {
+        "sections": [
+          {
+            "name": "Executive Summary",
+            "position": "A1:L8",
+            "type": "kpi_cards",
+            "elements": [
+              {
+                "name": "Total Flows",
+                "cell": "B2",
+                "formula": "=COUNTA('Raw Data'!A:A)-1",
+                "format": "number",
+                "color": "#2F5597"
+              },
+              {
+                "name": "High Risk Flows",
+                "cell": "B3",
+                "formula": "=COUNTIF('Raw Data'!RiskLevel,\"High\")",
+                "format": "number",
+                "color": "#C5504B",
+                "conditionalFormat": {
+                  "threshold": 10,
+                  "aboveColor": "#FF0000",
+                  "belowColor": "#00AA00"
+                }
+              },
+              {
+                "name": "Avg Compliance Score",
+                "cell": "B4",
+                "formula": "=ROUND(AVERAGE('Raw Data'!ComplianceScore),1)",
+                "format": "number_1_decimal",
+                "color": "#70AD47"
+              },
+              {
+                "name": "Critical Connectors",
+                "cell": "B5",
+                "formula": "=COUNTIF('Raw Data'!BusinessImpact,\"Critical\")",
+                "format": "number",
+                "color": "#FF9900"
+              },
+              {
+                "name": "Risk Percentage",
+                "cell": "B6",
+                "formula": "=ROUND((B3/B2)*100,1)&\"%\"",
+                "format": "percentage",
+                "color": "#7030A0"
+              },
+              {
+                "name": "Compliance Rate",
+                "cell": "B7",
+                "formula": "=ROUND((COUNTIFS('Raw Data'!ComplianceScore,\">70\")/B2)*100,1)&\"%\"",
+                "format": "percentage",
+                "color": "#0070C0"
+              }
+            ]
+          },
+          {
+            "name": "Risk Level Distribution",
+            "position": "A10:F25",
+            "type": "chart",
+            "chartType": "doughnut",
+            "dataSource": "PivotTable1",
+            "title": "Flow Distribution by Risk Level",
+            "colors": ["#70AD47", "#FFC000", "#C5504B"],
+            "showDataLabels": true,
+            "showLegend": true
+          },
+          {
+            "name": "Compliance Score Histogram",
+            "position": "H10:L25",
+            "type": "chart",
+            "chartType": "column",
+            "dataSource": "ComplianceHistogram",
+            "title": "Compliance Score Distribution",
+            "xAxisTitle": "Compliance Score Range",
+            "yAxisTitle": "Number of Flows",
+            "colors": ["#2F5597"]
+          },
+          {
+            "name": "Top Risk Flows",
+            "position": "A27:G40",
+            "type": "table",
+            "dataSource": "'Raw Data'!A1:G20",
+            "title": "Top 20 High-Risk Flows",
+            "sortBy": "RiskLevel DESC, ComplianceScore ASC",
+            "conditionalFormatting": [
+              {
+                "column": "RiskLevel",
+                "condition": "High",
+                "format": {
+                  "backgroundColor": "#FFCCCC",
+                  "fontColor": "#AA0000",
+                  "fontWeight": "bold"
+                }
+              },
+              {
+                "column": "ComplianceScore",
+                "condition": "<40",
+                "format": {
+                  "backgroundColor": "#FFE6E6",
+                  "fontColor": "#CC0000"
+                }
+              }
+            ]
+          },
+          {
+            "name": "Connector Security Heatmap",
+            "position": "I27:O40",
+            "type": "heatmap",
+            "dataSource": "ConnectorRiskMatrix",
+            "title": "Connector Risk vs Usage Matrix",
+            "xAxisTitle": "Usage Frequency",
+            "yAxisTitle": "Security Risk Level",
+            "colorScale": {
+              "low": "#90EE90",
+              "medium": "#FFD700",
+              "high": "#FF6347"
+            }
+          }
+        ]
+      },
+      "pivotTables": [
+        {
+          "name": "PivotTable1",
+          "location": "A45:D50",
+          "sourceData": "'Raw Data'!A:Z",
+          "rowFields": ["RiskLevel"],
+          "valueFields": [
+            {
+              "field": "FlowID",
+              "function": "COUNT",
+              "displayName": "Flow Count"
+            }
+          ],
+          "refresh": "onDataChange"
+        },
+        {
+          "name": "ConnectorSecuritySummary",
+          "location": "F45:J55",
+          "sourceData": "'Connector Analysis'!A:Z",
+          "rowFields": ["SecurityRisk"],
+          "columnFields": ["UsageFrequency"],
+          "valueFields": [
+            {
+              "field": "ConnectorName",
+              "function": "COUNT",
+              "displayName": "Count"
+            }
+          ]
+        }
+      ],
+      "slicers": [
+        {
+          "name": "DepartmentSlicer",
+          "position": "N2:P8",
+          "sourceData": "'Raw Data'!Owner",
+          "title": "Filter by Owner",
+          "style": "SlicerStyleLight1"
+        },
+        {
+          "name": "RiskLevelSlicer",
+          "position": "N10:P16",
+          "sourceData": "'Raw Data'!RiskLevel",
+          "title": "Filter by Risk Level",
+          "style": "SlicerStyleLight2"
+        },
+        {
+          "name": "BusinessImpactSlicer",
+          "position": "N18:P24",
+          "sourceData": "'Raw Data'!BusinessImpact",
+          "title": "Filter by Business Impact",
+          "style": "SlicerStyleLight3"
+        }
+      ],
+      "conditionalFormatting": [
+        {
+          "range": "B2:B7",
+          "rules": [
+            {
+              "type": "dataBar",
+              "color": "#4472C4",
+              "showValue": true
+            }
+          ]
+        },
+        {
+          "range": "'Raw Data'!ComplianceScore",
+          "rules": [
+            {
+              "type": "colorScale",
+              "minColor": "#F8696B",
+              "midColor": "#FFEB9C",
+              "maxColor": "#63BE7B",
+              "minValue": 0,
+              "midValue": 50,
+              "maxValue": 100
+            }
+          ]
+        }
+      ]
+    },
+    "Trend Analysis": {
+      "layout": {
+        "sections": [
+          {
+            "name": "Risk Trends Over Time",
+            "position": "A2:H20",
+            "type": "chart",
+            "chartType": "line",
+            "title": "Security Risk Trends",
+            "xAxisTitle": "Month",
+            "yAxisTitle": "Risk Score",
+            "dataSource": "TrendData",
+            "series": [
+              {
+                "name": "High Risk Count",
+                "color": "#C5504B"
+              },
+              {
+                "name": "Medium Risk Count",
+                "color": "#FFC000"
+              },
+              {
+                "name": "Low Risk Count",
+                "color": "#70AD47"
+              }
+            ]
+          },
+          {
+            "name": "Compliance Trend",
+            "position": "J2:Q20",
+            "type": "chart",
+            "chartType": "area",
+            "title": "Compliance Score Trends",
+            "xAxisTitle": "Month",
+            "yAxisTitle": "Average Compliance Score",
+            "dataSource": "ComplianceTrendData",
+            "fillColor": "#2F5597",
+            "transparency": 30
+          }
+        ]
+      }
+    },
+    "Risk Analysis": {
+      "layout": {
+        "sections": [
+          {
+            "name": "Risk Assessment Matrix",
+            "position": "A2:L30",
+            "type": "matrix",
+            "title": "Flow Risk Assessment Detail",
+            "dataSource": "'Raw Data'!A:Z",
+            "columns": [
+              "FlowName",
+              "Owner",
+              "RiskLevel",
+              "ComplianceScore",
+              "BusinessImpact",
+              "ExternalConnections",
+              "PermissionLevel",
+              "LastModified"
+            ],
+            "sortBy": "RiskLevel DESC, ComplianceScore ASC",
+            "filters": ["RiskLevel", "Owner", "BusinessImpact"]
+          }
+        ]
+      }
+    },
+    "Compliance Report": {
+      "layout": {
+        "sections": [
+          {
+            "name": "Framework Compliance",
+            "position": "A2:J25",
+            "type": "table",
+            "title": "Compliance Framework Assessment",
+            "dataSource": "ComplianceMetrics",
+            "groupBy": "ComplianceLevel",
+            "showSubtotals": true
+          },
+          {
+            "name": "Remediation Plan",
+            "position": "A27:K45",
+            "type": "table",
+            "title": "Security Remediation Priorities",
+            "dataSource": "RemediationData",
+            "sortBy": "Priority ASC, EffortHours ASC"
+          }
+        ]
+      }
+    }
+  },
+  "namedRanges": {
+    "RiskScores": "'Raw Data'!RiskLevel",
+    "ComplianceScores": "'Raw Data'!ComplianceScore",
+    "FlowOwners": "'Raw Data'!Owner",
+    "BusinessImpacts": "'Raw Data'!BusinessImpact",
+    "ConnectorCounts": "'Raw Data'!ConnectorCount",
+    "LastRefreshTime": "Settings!B1",
+    "RefreshStatus": "Settings!B2",
+    "DashboardTitle": "Dashboard!A1"
+  },
+  "dataValidation": [
+    {
+      "range": "Settings!D5:D20",
+      "type": "list",
+      "source": "RiskScores",
+      "allowBlank": true,
+      "errorMessage": "Please select a valid risk level"
+    }
+  ],
+  "themes": {
+    "corporate": {
+      "primaryColor": "#2F5597",
+      "secondaryColor": "#70AD47",
+      "accentColor": "#FFC000",
+      "warningColor": "#C5504B",
+      "backgroundColor": "#FFFFFF",
+      "textColor": "#000000"
+    },
+    "security": {
+      "primaryColor": "#8B0000",
+      "secondaryColor": "#FF6347",
+      "accentColor": "#FFD700",
+      "warningColor": "#FF0000",
+      "backgroundColor": "#F5F5F5",
+      "textColor": "#2F2F2F"
+    }
+  },
+  "refreshSettings": {
+    "autoRefresh": true,
+    "refreshInterval": 60,
+    "refreshOnOpen": true,
+    "backgroundRefresh": true,
+    "connections": [
+      "SecurityAssessmentData",
+      "ConnectorAnalysis",
+      "ComplianceMetrics"
+    ]
+  },
+  "exportSettings": {
+    "pdfExport": {
+      "enabled": true,
+      "worksheets": ["Dashboard", "Risk Analysis", "Compliance Report"],
+      "orientation": "landscape",
+      "fitToPage": true
+    },
+    "csvExport": {
+      "enabled": true,
+      "includeCharts": false,
+      "dataOnly": true
+    }
+  },
+  "userPermissions": {
+    "viewOnly": ["Dashboard", "Trend Analysis"],
+    "editData": ["Raw Data", "Settings"],
+    "fullAccess": ["All"]
+  }
+}

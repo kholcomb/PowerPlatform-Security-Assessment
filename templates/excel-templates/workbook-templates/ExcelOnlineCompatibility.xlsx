@@ -1,0 +1,150 @@
+# Excel Online Compatibility Template Configuration
+# This file contains specifications for Excel Online compatible features
+
+# Excel Online Limitations and Workarounds:
+
+## Supported Features:
+# - Basic Power Query (limited transformations)
+# - Pivot Tables (basic functionality)
+# - Charts (standard types only)
+# - Conditional Formatting (basic rules)
+# - Slicers (basic filtering)
+# - Tables and structured references
+# - Basic formulas and functions
+
+## Not Supported in Excel Online:
+# - VBA Macros
+# - External data connections (limited)
+# - Advanced Power Query transformations
+# - Complex custom functions
+# - ActiveX controls
+# - Advanced chart types
+
+## Workarounds for Excel Online:
+
+### 1. Replace VBA with Office Scripts
+# Use Office Scripts (TypeScript) instead of VBA for automation
+# Store scripts in the cloud for online execution
+
+### 2. Simplified Data Connections
+# Pre-configure data connections in desktop Excel
+# Use simplified refresh mechanisms
+# Implement manual refresh procedures
+
+### 3. Basic Chart Types Only
+# Stick to column, line, pie, and bar charts
+# Avoid advanced chart types like treemap, waterfall
+# Use conditional formatting for visual impact
+
+### 4. Manual Process Documentation
+# Since automation is limited, provide clear manual steps
+# Create step-by-step refresh procedures
+# Document workaround processes
+
+## Excel Online Template Structure:
+
+### Worksheet Layout:
+# 1. Dashboard (Executive Summary)
+# 2. Data (Simplified raw data)
+# 3. Analysis (Basic pivot tables)
+# 4. Charts (Standard chart types)
+# 5. Instructions (Manual process guide)
+
+### Data Refresh Process for Excel Online:
+# 1. Open workbook in desktop Excel
+# 2. Run full refresh using VBA macros
+# 3. Save file to cloud storage
+# 4. View updated dashboard in Excel Online
+# 5. Share with stakeholders online
+
+### Simplified Formula Examples:
+# =SUMIFS(Data[ComplianceScore],Data[RiskLevel],"High")
+# =COUNTIF(Data[BusinessImpact],"Critical")
+# =AVERAGE(Data[ComplianceScore])
+# =MAX(Data[LastModified])
+
+### Basic Conditional Formatting:
+# Risk Level: Use icon sets (traffic lights)
+# Compliance Score: Use color scales (red-yellow-green)
+# Date fields: Use data bars for age visualization
+
+### Standard Chart Configurations:
+# Risk Distribution: Pie chart with data labels
+# Compliance Trends: Line chart with markers
+# Department Analysis: Column chart with legend
+# Top Risks: Horizontal bar chart
+
+### Slicer Configuration for Online:
+# - Keep slicers simple (single-select preferred)
+# - Use clear, descriptive titles
+# - Position for easy mobile access
+# - Test cross-filtering functionality
+
+### Mobile Optimization:
+# - Use larger touch targets (min 44px)
+# - Optimize for portrait orientation
+# - Simplify navigation between sheets
+# - Ensure readability on small screens
+
+## Office Scripts Alternative (TypeScript):
+
+function main(workbook: ExcelScript.Workbook) {
+  // Get the Data worksheet
+  let dataSheet = workbook.getWorksheet("Data");
+  
+  // Refresh data (manual step required)
+  console.log("Please refresh data manually using desktop Excel");
+  
+  // Update dashboard calculations
+  let dashboardSheet = workbook.getWorksheet("Dashboard");
+  
+  // Calculate key metrics
+  let totalFlows = dataSheet.getUsedRange().getRowCount() - 1;
+  let highRiskCount = 0; // Would need to implement counting logic
+  
+  // Update KPI cells
+  dashboardSheet.getCell(1, 1).setValue(totalFlows);
+  dashboardSheet.getCell(2, 1).setValue(highRiskCount);
+  
+  console.log("Dashboard updated successfully");
+}
+
+## Deployment Checklist for Excel Online:
+
+### Pre-Deployment:
+# - Test all formulas in Excel Online
+# - Verify chart rendering
+# - Check conditional formatting display
+# - Test slicer functionality
+# - Validate mobile responsiveness
+
+### During Deployment:
+# - Upload to SharePoint or OneDrive
+# - Set appropriate sharing permissions
+# - Test with end users
+# - Document any limitations
+# - Provide training materials
+
+### Post-Deployment:
+# - Monitor performance
+# - Collect user feedback
+# - Plan regular updates
+# - Maintain desktop version for full refresh
+
+## User Training Materials:
+
+### For Excel Online Users:
+# 1. How to access the dashboard
+# 2. Using slicers and filters
+# 3. Interpreting charts and KPIs
+# 4. When to request data refresh
+# 5. Mobile usage tips
+
+### For Administrators:
+# 1. Desktop refresh procedures
+# 2. File upload process
+# 3. Permission management
+# 4. Troubleshooting common issues
+# 5. Update scheduling
+
+This configuration ensures maximum compatibility with Excel Online while maintaining essential functionality for security assessment reporting.

@@ -1,0 +1,53 @@
+# Excel Workbook Template Configuration
+# This file contains the structure and configuration for the Security Assessment Excel template
+
+# Worksheet Structure:
+# 1. Dashboard - Executive summary with charts and KPIs
+# 2. Raw Data - Power Query imported data
+# 3. Risk Analysis - Detailed risk breakdown
+# 4. Compliance Report - Compliance status and recommendations
+# 5. Trend Analysis - Historical data trends
+# 6. Settings - Configuration and refresh controls
+
+# Power Query Connections:
+# - SecurityAssessmentData: Main security data feed
+# - ConnectorAnalysis: Connector security analysis
+# - ComplianceMetrics: Compliance scoring data
+# - TrendData: Historical trend information
+
+# Named Ranges:
+# - RiskLevels: A1:D100 (Dashboard)
+# - ComplianceScores: F1:H100 (Dashboard)
+# - FilterCriteria: A1:E10 (Settings)
+# - RefreshStatus: G1:H5 (Settings)
+
+# Pivot Tables:
+# 1. RiskByDepartment (Dashboard!A10:E30)
+# 2. ConnectorSecuritySummary (Dashboard!G10:K30)
+# 3. ComplianceTrends (Trend Analysis!A5:F25)
+# 4. FlowPermissionAnalysis (Risk Analysis!A5:H35)
+
+# Conditional Formatting Rules:
+# - High Risk: Red background for scores < 40
+# - Medium Risk: Yellow background for scores 40-70
+# - Low Risk: Green background for scores > 70
+# - Critical Flows: Bold red text for critical business impact
+
+# Data Validation:
+# - Department filter: List from Settings!B2:B20
+# - Date range: Between TODAY()-365 and TODAY()
+# - Risk threshold: Number between 0 and 100
+
+# Formulas and Calculations:
+# =SUMIFS(RiskScores,Department,A2,RiskLevel,"High")
+# =COUNTIFS(FlowData[Status],"Active",FlowData[Risk],"Critical")
+# =AVERAGEIFS(ComplianceScores,BusinessUnit,B3,Quarter,C3)
+
+# VBA Integration Points:
+# - RefreshAllData() macro button
+# - GenerateReport() macro button  
+# - ExportDashboard() macro button
+# - ScheduleRefresh() macro configuration
+
+# Note: This is a template configuration file. The actual .xlsx file would be created using Excel
+# with the above specifications implemented through the Excel interface and VBA macros.

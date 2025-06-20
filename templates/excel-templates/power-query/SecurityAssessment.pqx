@@ -1,0 +1,43 @@
+# Power Query Template for Power Automate Security Assessment
+# This is a Power Query (.pqx) template file for importing security assessment data
+
+let
+    // Source configuration
+    Source = Json.Document(Web.Contents("https://api.powerautomate.com/security-assessment")),
+    
+    // Security Flows Table
+    SecurityFlows = Table.FromRecords(Source[flows]),
+    
+    // Add calculated columns for risk assessment
+    AddRiskLevel = Table.AddColumn(SecurityFlows, "RiskLevel", each 
+        if [PermissionLevel] = "Admin" and [ExternalConnections] > 0 then "High"
+        else if [PermissionLevel] = "Admin" or [ExternalConnections] > 0 then "Medium"
+        else "Low"),
+    
+    // Add compliance score
+    AddComplianceScore = Table.AddColumn(AddRiskLevel, "ComplianceScore", each
+        let
+            baseScore = 100,
+            adminPenalty = if [PermissionLevel] = "Admin" then 20 else 0,
+            externalPenalty = [ExternalConnections] * 10,
+            unencryptedPenalty = if [IsEncrypted] = false then 15 else 0
+        in
+            Number.Max({0, baseScore - adminPenalty - externalPenalty - unencryptedPenalty})),
+    
+    // Format dates
+    FormatDates = Table.TransformColumns(AddComplianceScore, {
+        {"CreatedDate", each DateTime.FromText(_), type datetime},
+        {"LastModified", each DateTime.FromText(_), type datetime}
+    }),
+    
+    // Add business impact classification
+    AddBusinessImpact = Table.AddColumn(FormatDates, "BusinessImpact", each
+        if [ConnectorCount] > 5 and [UserCount] > 50 then "Critical"
+        else if [ConnectorCount] > 3 or [UserCount] > 20 then "High"
+        else if [ConnectorCount] > 1 or [UserCount] > 5 then "Medium"
+        else "Low"),
+    
+    // Sort by risk level and compliance score
+    SortedData = Table.Sort(AddBusinessImpact, {{"RiskLevel", Order.Ascending}, {"ComplianceScore", Order.Ascending}})
+in
+    SortedData

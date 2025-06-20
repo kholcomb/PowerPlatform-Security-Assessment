@@ -1,0 +1,76 @@
+# Power Query Template for Connector Security Analysis
+
+let
+    // Connector data source
+    ConnectorSource = Json.Document(Web.Contents("https://api.powerautomate.com/connectors")),
+    ConnectorTable = Table.FromRecords(ConnectorSource[connectors]),
+    
+    // Security classification lookup
+    SecurityClassification = #table(
+        {"ConnectorType", "SecurityRisk", "ComplianceCategory"},
+        {
+            {"SharePoint", "Low", "Microsoft 365"},
+            {"OneDrive", "Low", "Microsoft 365"},
+            {"Outlook", "Medium", "Microsoft 365"},
+            {"SQL Server", "High", "Database"},
+            {"HTTP", "Critical", "External"},
+            {"File System", "High", "Local"},
+            {"FTP", "Critical", "External"},
+            {"Dropbox", "Medium", "Third Party"},
+            {"Salesforce", "Medium", "Third Party"},
+            {"Twitter", "Low", "Social Media"},
+            {"Facebook", "Low", "Social Media"}
+        }
+    ),
+    
+    // Join with security classification
+    JoinedData = Table.NestedJoin(
+        ConnectorTable,
+        {"ConnectorType"},
+        SecurityClassification,
+        {"ConnectorType"},
+        "SecurityInfo",
+        JoinKind.LeftOuter
+    ),
+    
+    // Expand security information
+    ExpandedSecurity = Table.ExpandTableColumn(
+        JoinedData,
+        "SecurityInfo",
+        {"SecurityRisk", "ComplianceCategory"},
+        {"SecurityRisk", "ComplianceCategory"}
+    ),
+    
+    // Add usage statistics
+    AddUsageStats = Table.AddColumn(ExpandedSecurity, "UsageFrequency", each
+        if [FlowCount] > 100 then "Very High"
+        else if [FlowCount] > 50 then "High"
+        else if [FlowCount] > 10 then "Medium"
+        else "Low"),
+    
+    // Calculate security score
+    AddSecurityScore = Table.AddColumn(AddUsageStats, "SecurityScore", each
+        let
+            riskScore = if [SecurityRisk] = "Critical" then 0
+                       else if [SecurityRisk] = "High" then 25
+                       else if [SecurityRisk] = "Medium" then 50
+                       else if [SecurityRisk] = "Low" then 75
+                       else 100,
+            usageModifier = if [UsageFrequency] = "Very High" then -20
+                           else if [UsageFrequency] = "High" then -10
+                           else 0
+        in
+            Number.Max({0, riskScore + usageModifier})),
+    
+    // Group by security risk
+    GroupedByRisk = Table.Group(
+        AddSecurityScore,
+        {"SecurityRisk"},
+        {
+            {"ConnectorCount", each Table.RowCount(_), Int64.Type},
+            {"TotalFlows", each List.Sum([FlowCount]), Int64.Type},
+            {"AverageSecurityScore", each Number.Round(List.Average([SecurityScore]), 2), Number.Type}
+        }
+    )
+in
+    AddSecurityScore

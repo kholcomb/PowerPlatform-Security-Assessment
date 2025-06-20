@@ -1,0 +1,98 @@
+# PowerShell
+*.ps1xml
+*.psc1
+*.psd1
+
+# Logs
+*.log
+logs/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+.env.test
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Excel temp files
+~$*.xlsx
+~$*.xls
+
+# PowerBI temp files
+*.pbix.tmp
+
+# API Keys and secrets (security critical)
+*secrets*
+*apikey*
+*api-key*
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Configuration files with sensitive data
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+# PowerPlatform specific sensitive files
+config/API-Config.json
+*config*.json
+*.config
+*credentials*
+*auth*token*
+*jwt*secret*
+
+# PowerShell credential files
+*.credential
+*cred.ps1
+*password*.ps1
+
+# Build outputs
+dist/
+build/
+out/
+
+# Test outputs
+TestResults/
+coverage/
