@@ -59,18 +59,26 @@ function Test-MakerConnection {
     Write-MakerAssessmentLog "Testing Power Platform connection with Maker permissions..." "Info"
     
     try {
-        # Test basic connectivity
-        $userInfo = Get-PowerAppTenant -ErrorAction Stop
-        Write-MakerAssessmentLog "Successfully connected as: $($userInfo.DisplayName)" "Success"
+        # Test basic connectivity by getting environments (this will fail if not authenticated)
+        $testConnection = Get-FlowEnvironment -ErrorAction Stop | Select-Object -First 1
         
-        $Global:MakerAssessmentResults.UserContext = @{
-            DisplayName = $userInfo.DisplayName
-            TenantId = $userInfo.TenantId
-            Role = "Maker"
-            AssessmentScope = "Personal and Accessible Resources Only"
+        if ($testConnection) {
+            # Get current user information from Windows identity
+            $currentUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+            Write-MakerAssessmentLog "Successfully connected as: $currentUser" "Success"
+            
+            $Global:MakerAssessmentResults.UserContext = @{
+                DisplayName = $currentUser
+                TenantId = "N/A (Maker permissions only)"
+                Role = "Maker"
+                AssessmentScope = "Personal and Accessible Resources Only"
+            }
+            
+            return $true
         }
-        
-        return $true
+        else {
+            throw "No environments found - please check your permissions"
+        }
     }
     catch {
         Write-MakerAssessmentLog "Failed to connect to Power Platform: $($_.Exception.Message)" "Error"
@@ -84,7 +92,7 @@ function Get-AccessibleEnvironments {
     
     try {
         # Get environments where user has maker access
-        $environments = Get-PowerAppEnvironment
+        $environments = Get-FlowEnvironment
         
         foreach ($env in $environments) {
             $envAssessment = @{
@@ -124,7 +132,7 @@ function Get-PersonalFlows {
     
     try {
         # Get flows owned/accessible to current user
-        $flows = Get-PowerAppFlow
+        $flows = Get-Flow
         
         foreach ($flow in $flows) {
             $flowAssessment = @{
@@ -149,7 +157,7 @@ function Get-PersonalFlows {
             
             # Check if flow is shared (limited visibility)
             try {
-                $flowDetails = Get-PowerAppFlow -FlowName $flow.FlowName
+                $flowDetails = Get-Flow -FlowName $flow.FlowName
                 if ($flowDetails.Properties.definition) {
                     # Can see some trigger information
                     $triggers = $flowDetails.Properties.definition.triggers
